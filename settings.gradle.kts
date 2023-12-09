@@ -15,3 +15,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "rido"
 include(":app")
+include(":core_models")
+include(":source")
