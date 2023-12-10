@@ -4,5 +4,5 @@ import com.example.core_models.manga.MangaListItem
 
 interface MangaSource {
 
-    fun getMangaList(): List<MangaListItem>
+    suspend fun getMangaList(page: Int): List<MangaListItem>
 }
