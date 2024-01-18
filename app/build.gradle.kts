@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
+    id("kotlinx-serialization")
 }
 
 android {
@@ -30,11 +32,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -50,7 +52,14 @@ android {
 }
 
 dependencies {
+    implementation(project(":source"))
+    implementation(project(":core_models"))
+    implementation(project(":core_network"))
 
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.0")
