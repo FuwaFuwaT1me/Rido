@@ -54,7 +54,6 @@ android {
 
 dependencies {
     implementation(project(":source"))
-    implementation(project(":core_models"))
     implementation(project(":core_network"))
     implementation(project(":core_data"))
     implementation(project(":core_domain"))

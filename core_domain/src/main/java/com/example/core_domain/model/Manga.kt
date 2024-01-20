@@ -1,4 +1,4 @@
-package com.example.core_models.manga
+package com.example.core_domain.model
 
 data class Manga(
     val id: Long,

@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core_models"))
+    implementation(project(":core_domain"))
     implementation(project(":core_network"))
 
     implementation("org.jsoup:jsoup:1.17.1")

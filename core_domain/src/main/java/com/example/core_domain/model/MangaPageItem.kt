@@ -1,6 +1,4 @@
-package com.example.core_models.manga
-
-import com.google.gson.annotations.SerializedName
+package com.example.core_domain.model
 
 data class MangaPageItem(
     val id: Int,

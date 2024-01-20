@@ -35,7 +35,6 @@ android {
 
 dependencies {
     implementation(project(":core_data"))
-    implementation(project(":core_models"))
     implementation(project(":core_domain"))
 
     implementation("com.google.dagger:dagger:2.40.5")
