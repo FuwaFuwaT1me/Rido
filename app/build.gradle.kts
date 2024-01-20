@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-android")
     id("kotlinx-serialization")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -55,6 +56,13 @@ dependencies {
     implementation(project(":source"))
     implementation(project(":core_models"))
     implementation(project(":core_network"))
+    implementation(project(":core_data"))
+    implementation(project(":core_domain"))
+
+    implementation(project(":feature_manga_library"))
+
+    implementation("com.google.dagger:dagger:2.40.5")
+    ksp("com.google.dagger:dagger-compiler:2.40.5")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
