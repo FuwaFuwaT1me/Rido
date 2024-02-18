@@ -7,6 +7,7 @@ import com.example.core.mvi.api.Event
 import com.example.core.mvi.api.Events
 import com.example.core.mvi.api.Model
 import com.example.core.mvi.api.ModelState
+import com.example.core.mvi.api.MviNavigationEvent
 import com.example.core.mvi.api.State
 import com.example.core.mvi.api.withState
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,7 @@ abstract class BaseModel<ViewState, ViewAction, ViewEvent, NavEvent>(
     where ViewState : State,
           ViewAction : Action,
           ViewEvent : Event,
-          NavEvent : NavigationEvent {
+          NavEvent : MviNavigationEvent {
 
     override val viewState: StateFlow<ViewState>
         get() = modelState.viewState

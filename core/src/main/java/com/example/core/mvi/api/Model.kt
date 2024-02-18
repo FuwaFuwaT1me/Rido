@@ -9,7 +9,7 @@ interface Model<ViewState, ViewAction, ViewEvent, NavEvent>
     where ViewState : State,
           ViewAction : Action,
           ViewEvent : Event,
-          NavEvent : NavigationEvent {
+          NavEvent : MviNavigationEvent {
 
 
     val viewState: StateFlow<ViewState>

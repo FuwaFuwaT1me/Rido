@@ -1,13 +1,14 @@
 package com.example.core.mvi.impl
 
 import com.example.core.mvi.api.ModelNavigationEvent
+import com.example.core.mvi.api.MviNavigationEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-class BaseModelNavigationEvent<NavEvent : NavigationEvent> (
+class BaseModelNavigationEvent<NavEvent : MviNavigationEvent> (
     private val scope: CoroutineScope
 ) : ModelNavigationEvent<NavEvent> {
 
