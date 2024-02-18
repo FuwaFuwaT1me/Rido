@@ -2,10 +2,11 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
 //    id("com.google.devtools.ksp")
+    id("kotlin-kapt")
 }
 
 android {
-    namespace = "com.example.core_network"
+    namespace = "com.example.feature_manga_library"
     compileSdk = 34
 
     defaultConfig {
@@ -24,6 +25,12 @@ android {
             )
         }
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -32,11 +39,7 @@ android {
         jvmTarget = "17"
     }
 }
-
 dependencies {
-    implementation(project(":core_domain"))
-
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation("androidx.compose.runtime:runtime:1.6.1")
+    implementation("androidx.core:core-ktx:1.12.0")
 }

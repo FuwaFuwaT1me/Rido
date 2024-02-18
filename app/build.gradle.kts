@@ -3,17 +3,18 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-android")
     id("kotlinx-serialization")
-    id("com.google.devtools.ksp")
+//    id("com.google.devtools.ksp")
+    id("kotlin-kapt")
 }
 
 android {
     namespace = "com.example.rido"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.rido"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -43,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -57,14 +58,15 @@ dependencies {
     implementation(project(":core_network"))
     implementation(project(":core_data"))
     implementation(project(":core_domain"))
+    implementation(project(":util"))
+    implementation(project(":feature_my_library"))
 
-    implementation(project(":feature_manga_library"))
-
-    implementation("com.google.dagger:dagger:2.40.5")
-    ksp("com.google.dagger:dagger-compiler:2.40.5")
+    implementation("com.google.dagger:dagger:2.48.1")
+    kapt("com.google.dagger:dagger-compiler:2.48.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
+    implementation("androidx.compose.runtime:runtime:1.6.1")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("androidx.core:core-ktx:1.9.0")

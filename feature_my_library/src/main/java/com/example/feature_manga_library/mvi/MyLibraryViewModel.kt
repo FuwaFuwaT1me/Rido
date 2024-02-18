@@ -3,7 +3,7 @@ package com.example.feature_manga_library.mvi
 import com.example.core.mvi.api.MviNavigationEvent
 import com.example.core.mvi.impl.BaseMviViewModel
 
-class MangaLibraryViewModel(
+class MyLibraryViewModel(
     override val model: MangaLibraryModel,
 ) : BaseMviViewModel<MangaLibraryAction, MangaLibraryEvent, MangaLibraryState, MviNavigationEvent>() {
 
