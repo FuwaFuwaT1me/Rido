@@ -14,8 +14,9 @@
             <option value="$PROJECT_DIR$/core_data" />
             <option value="$PROJECT_DIR$/core_domain" />
             <option value="$PROJECT_DIR$/core_network" />
-            <option value="$PROJECT_DIR$/feature_manga_library" />
+            <option value="$PROJECT_DIR$/feature_my_library" />
             <option value="$PROJECT_DIR$/source" />
+            <option value="$PROJECT_DIR$/util" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

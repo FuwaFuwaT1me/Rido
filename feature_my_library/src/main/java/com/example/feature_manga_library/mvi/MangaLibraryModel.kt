@@ -4,8 +4,10 @@ import com.example.core.mvi.api.MviNavigationEvent
 import com.example.core.mvi.impl.BaseModel
 import com.example.core.mvi.impl.NavigationEvent
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import javax.inject.Inject
 
-class MangaLibraryModel(
+class MangaLibraryModel @Inject constructor(
     defaultViewState: MangaLibraryState,
     scope: CoroutineScope,
 ) : BaseModel<MangaLibraryState, MangaLibraryAction, MangaLibraryEvent, MviNavigationEvent>(

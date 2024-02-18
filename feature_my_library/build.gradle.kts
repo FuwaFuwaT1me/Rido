@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
 //    id("com.google.devtools.ksp")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -40,15 +41,21 @@ android {
     }
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
     implementation(project(":core_data"))
     implementation(project(":core_domain"))
     implementation(project(":core"))
     implementation(project(":util"))
 
-    implementation("com.google.dagger:dagger:2.48.1")
+    implementation("com.google.dagger:hilt-android:2.50")
+    kapt("com.google.dagger:hilt-compiler:2.50")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.1")
-    kapt("com.google.dagger:dagger-compiler:2.48.1")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
