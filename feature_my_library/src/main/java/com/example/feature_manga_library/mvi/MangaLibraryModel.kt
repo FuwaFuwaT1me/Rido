@@ -4,17 +4,16 @@ import com.example.core.mvi.api.MviNavigationEvent
 import com.example.core.mvi.impl.BaseModel
 import com.example.core.mvi.impl.NavigationEvent
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 class MangaLibraryModel @Inject constructor(
-    defaultViewState: MangaLibraryState,
+    defaultViewState: MyLibraryState,
     scope: CoroutineScope,
-) : BaseModel<MangaLibraryState, MangaLibraryAction, MangaLibraryEvent, MviNavigationEvent>(
+) : BaseModel<MyLibraryState, MyLibraryAction, MyLibraryEvent, NavigationEvent>(
     defaultViewState, scope
 ) {
 
-    override fun onViewAction(action: MangaLibraryAction) {
+    override fun onViewAction(action: MyLibraryAction) {
         TODO("Not yet implemented")
     }
 }
