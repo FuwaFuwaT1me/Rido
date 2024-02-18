@@ -7,15 +7,15 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import javax.inject.Singleton
 
-@MyLibraryScope
 @InstallIn(SingletonComponent::class)
 @Module
 interface MyLibraryModule {
 
     companion object {
 
-        @MyLibraryScope
+        @Singleton
         @Provides
         fun provideDefaultState(): MyLibraryState {
             return MyLibraryState(
@@ -23,7 +23,7 @@ interface MyLibraryModule {
             )
         }
 
-        @MyLibraryScope
+        @Singleton
         @Provides
         fun provideDefaultCoroutineScope(): CoroutineScope {
             return CoroutineScope(Dispatchers.Default)
