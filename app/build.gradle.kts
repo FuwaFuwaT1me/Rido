@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":core_domain"))
     implementation(project(":util"))
     implementation(project(":feature_my_library"))
+    implementation(project(":feature_viewer"))
 
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-compiler:2.44")

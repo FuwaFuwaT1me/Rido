@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toFile
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.core_domain.model.comics.manga.LocalMangaItem
 import com.example.core_domain.model.common.Source
@@ -30,6 +31,7 @@ import com.example.feature_manga_library.R
 import com.example.feature_manga_library.add_title.FilePicker
 import com.example.feature_manga_library.mvi.MyLibraryViewModel
 import com.example.util.convertToByteArray
+import java.io.File
 
 @Composable
 fun MyLibraryScreen(
@@ -79,7 +81,9 @@ fun MyLibraryScreen(
             FilePicker(
                 show = showFilePicker,
                 onContentSelected = { uris ->
-                    Log.d("anime", "$uris")
+                    val uri = uris[0]
+                    val file = File(uri.path)
+                    Log.d("anime", "${file.absolutePath}")
                     showFilePicker = false
                 }
             )
