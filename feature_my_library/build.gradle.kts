@@ -50,6 +50,9 @@ dependencies {
     implementation(project(":core_domain"))
     implementation(project(":core"))
     implementation(project(":util"))
+    implementation(project(":feature_viewer"))
+
+    implementation("com.google.accompanist:accompanist-permissions:0.20.0")
 
     implementation("com.google.dagger:hilt-android:2.50")
     kapt("com.google.dagger:hilt-compiler:2.50")

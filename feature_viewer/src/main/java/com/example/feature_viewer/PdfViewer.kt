@@ -97,7 +97,7 @@ fun PdfViewer(
     }
 
     LaunchedEffect(true) {
-        if (pagePaths.isNotEmpty()) {
+        if (pagePaths.isEmpty()) {
             val paths = context.loadPdf(pdfStream, loadingListener)
             pagePaths.addAll(paths)
         }
@@ -201,9 +201,9 @@ suspend fun Context.loadPdf(
             page.close()
 
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
-            Log.i("PDF_VIEWER", "Loaded page $pageNumber")
+            Log.i("ANIME", "Loaded page $pageNumber")
 
-            file.absolutePath.also { Log.d("RIDO", it) }
+            file.absolutePath.also { Log.d("ANIME", it) }
         }. also {
             loadingListener(false, null, renderer.pageCount)
             renderer.close()
