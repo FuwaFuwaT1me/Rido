@@ -1,221 +1,159 @@
 package com.example.feature_viewer
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.pdf.PdfRenderer
+import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.Log
-import androidx.annotation.RawRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import coil.imageLoader
+import coil.memory.MemoryCache
+import coil.request.ImageRequest
+import com.example.common.LazyColumnOrRow
+import com.example.common.Orientation
+import com.example.common.ZoomableImage
+import com.example.util.getFile
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-
-enum class PdfListDirection {
-    HORIZONTAL,
-    VERTICAL
-}
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlin.math.sqrt
 
 @Composable
 fun PdfViewer(
-    pdfStream: InputStream,
+    uri: Uri,
     modifier: Modifier = Modifier,
     backgroundColor: Color = Color(0xFF909090),
     pageColor: Color = Color.White,
-    listDirection: PdfListDirection = PdfListDirection.HORIZONTAL,
-    arrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(16.dp),
+    orientation: Orientation = Orientation.HORIZONTAL,
+    arrangement: Arrangement.HorizontalOrVertical = Arrangement.Center,
     loadingListener: (
         isLoading: Boolean,
         currentPage: Int?,
         maxPage: Int?
     ) -> Unit = { _, _, _ -> },
-) {
-    PdfViewer(
-        pdfStream = pdfStream,
-        modifier = modifier,
-        backgroundColor = backgroundColor,
-        listDirection = listDirection,
-        loadingListener = loadingListener,
-        arrangement = arrangement
-    ) { lazyState, image ->
-        PdfPage(
-            image = image,
-            lazyState = lazyState,
-            backgroundColor = pageColor
-        )
-    }
-}
-
-@Composable
-fun PdfViewer(
-    pdfStream: InputStream,
-    modifier: Modifier = Modifier,
-    backgroundColor: Color = Color(0xFF909090),
-    listDirection: PdfListDirection = PdfListDirection.HORIZONTAL,
-    arrangement: Arrangement.HorizontalOrVertical = Arrangement.spacedBy(16.dp),
-    loadingListener: (
-        isLoading: Boolean,
-        currentPage: Int?,
-        maxPage: Int?
-    ) -> Unit = { _, _, _ -> },
-    page: @Composable (LazyListState, ImageBitmap) -> Unit
 ) {
     val context = LocalContext.current
-    val pagePaths = remember {
-        mutableStateListOf<String>()
-    }
-
-    LaunchedEffect(true) {
-        if (pagePaths.isEmpty()) {
-            val paths = context.loadPdf(pdfStream, loadingListener)
-            pagePaths.addAll(paths)
+    val rendererScope = rememberCoroutineScope()
+    val mutex = remember { Mutex() }
+    val renderer by produceState<PdfRenderer?>(null, uri) {
+        rendererScope.launch(Dispatchers.IO) {
+            val input = ParcelFileDescriptor.open(uri.getFile(context), ParcelFileDescriptor.MODE_READ_ONLY)
+            value = PdfRenderer(input)
         }
-    }
-
-    val lazyState = rememberLazyListState()
-    when (listDirection) {
-        PdfListDirection.HORIZONTAL -> {
-            LazyRow(
-                modifier = modifier.background(backgroundColor),
-                state = lazyState,
-                horizontalArrangement = arrangement
-            ) {
-                items(pagePaths) { path ->
-                    var imageBitmap by remember {
-                        mutableStateOf<ImageBitmap?>(null)
-                    }
-
-                    LaunchedEffect(path) {
-                        imageBitmap = BitmapFactory.decodeFile(path).asImageBitmap()
-                    }
-                    imageBitmap?.let {
-                        page(lazyState, it)
-                    }
-                }
-            }
-        }
-        PdfListDirection.VERTICAL -> {
-            LazyColumn(
-                modifier = modifier.background(backgroundColor),
-                state = lazyState,
-                verticalArrangement = arrangement
-            ) {
-                items(pagePaths) { path ->
-                    var imageBitmap by remember {
-                        mutableStateOf<ImageBitmap?>(null)
-                    }
-
-                    LaunchedEffect(path) {
-                        imageBitmap = BitmapFactory.decodeFile(path).asImageBitmap()
-                    }
-                    imageBitmap?.let {
-                        page(lazyState, it)
-                    }
+        awaitDispose {
+            val currentRenderer = value
+            rendererScope.launch(Dispatchers.IO) {
+                mutex.withLock {
+                    currentRenderer?.close()
                 }
             }
         }
     }
-}
+    val imageLoader = LocalContext.current.imageLoader
+    val imageLoadingScope = rememberCoroutineScope()
 
-@Composable
-private fun PdfPage(
-    image: ImageBitmap,
-    lazyState: LazyListState,
-    backgroundColor: Color
-) {
-    Card(
-        modifier = Modifier.background(backgroundColor),
+    BoxWithConstraints(
+        modifier = modifier.fillMaxSize()
     ) {
-        ZoomableImage(painter = BitmapPainter(image), scrollState = lazyState)
-    }
-}
+//        val a = with(LocalDensity.current) { maxWidth.toPx() }.toInt()
+//        val height = with(LocalDensity.current) { maxHeight.toPx() }.toInt()
+        val pageCount by remember(renderer) { derivedStateOf { renderer?.pageCount ?: 0 } }
 
-suspend fun Context.loadPdf(
-    inputStream: InputStream,
-    loadingListener: (
-            isLoading: Boolean,
-            currentPage: Int?,
-            maxPage: Int?
-    ) -> Unit = { _, _, _ -> }
-): List<String> {
-    return withContext(Dispatchers.IO) {
-        loadingListener(true, null, null)
+        LazyColumnOrRow(
+            orientation = orientation,
+            arrangement = arrangement,
+            modifier = modifier.background(backgroundColor).align(Alignment.Center)
+        ) {
+            items(
+                count = pageCount,
+                key = { index -> "$uri-$index" }
+            ) { index ->
+                val cacheKey = MemoryCache.Key("$uri-$index")
+                val cacheValue = imageLoader.memoryCache?.get(cacheKey)?.bitmap
 
-        val outputDir = cacheDir
-        val tempFile = File.createTempFile("temp", "pdf", outputDir)
+                var width = with(LocalDensity.current) { maxWidth.toPx() }.toInt()
+                var height = with(LocalDensity.current) { maxHeight.toPx() * 0.75 }.toInt()
 
-        tempFile.mkdirs()
-        tempFile.deleteOnExit()
+//                val page = renderer?.openPage(index)
+//                page?.let {
+//                    width = page.width
+//                    height = page.width
+//                }
 
-        val outputStream = FileOutputStream(tempFile)
-        copy(inputStream, outputStream)
+                var bitmap by remember {
+                    mutableStateOf(cacheValue)
+                }
+                if (bitmap == null) {
+                    DisposableEffect(uri, index) {
+                        val job = imageLoadingScope.launch(Dispatchers.IO) {
+                            val destinationBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                            mutex.withLock {
+                                Log.d("PdfGenerator", "Loading PDF $uri - page $index/$pageCount")
+                                if (!coroutineContext.isActive) return@launch
 
-        val input = ParcelFileDescriptor.open(
-            tempFile,
-            ParcelFileDescriptor.MODE_READ_ONLY
-        )
-        val renderer = PdfRenderer(input)
+                                try {
+                                    renderer?.let {
+                                        it.openPage(index).use { page ->
+                                            page.render(
+                                                destinationBitmap,
+                                                null,
+                                                null,
+                                                PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+                                            )
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    return@launch
+                                }
+                            }
+                            bitmap = destinationBitmap
+                        }
+                        onDispose {
+                            job.cancel()
+                        }
+                    }
+                } else {
+                    val request = ImageRequest.Builder(context)
+                        .size(width, height)
+                        .memoryCacheKey(cacheKey)
+                        .data(bitmap)
+                        .build()
 
-        (0 until renderer.pageCount).map { pageNumber ->
-            loadingListener(true, pageNumber, renderer.pageCount)
-
-            val file = File.createTempFile("PDFPage$pageNumber", "png", outputDir)
-            file.mkdirs()
-            file.deleteOnExit()
-
-            val page = renderer.openPage(pageNumber)
-            val bitmap = Bitmap.createBitmap(1240, 1754, Bitmap.Config.ARGB_8888)
-
-            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-            page.close()
-
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(file))
-            Log.i("ANIME", "Loaded page $pageNumber")
-
-            file.absolutePath.also { Log.d("ANIME", it) }
-        }. also {
-            loadingListener(false, null, renderer.pageCount)
-            renderer.close()
+                    ZoomableImage(
+                        contentScale = ContentScale.Fit,
+                        painter = rememberAsyncImagePainter(request),
+                        modifier = Modifier
+                            .background(Color.White)
+//                            .aspectRatio(1f / sqrt(2f))
+                            .fillMaxWidth()
+                    )
+                }
+            }
         }
-    }
-}
-
-@Throws(IOException::class)
-private fun copy(source: InputStream, target: OutputStream) {
-    val buf = ByteArray(8192)
-    var length: Int
-    while (source.read(buf).also { length = it } > 0) {
-        target.write(buf, 0, length)
     }
 }

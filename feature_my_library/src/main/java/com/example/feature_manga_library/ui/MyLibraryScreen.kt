@@ -31,14 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toFile
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.core_domain.model.comics.manga.LocalMangaItem
 import com.example.core_domain.model.common.Source
 import com.example.core_domain.model.common.Status
 import com.example.feature_manga_library.R
 import com.example.feature_manga_library.add_title.FilePicker
-import com.example.feature_manga_library.add_title.getFile
 import com.example.feature_manga_library.mvi.MyLibraryViewModel
 import com.example.feature_viewer.PdfViewer
 import com.example.util.convertToByteArray
@@ -67,6 +65,10 @@ fun MyLibraryScreen(
 
     val files = remember {
         mutableStateListOf<File>()
+    }
+
+    val uriss = remember {
+        mutableStateListOf<Uri>()
     }
 
     val context = LocalContext.current
@@ -113,13 +115,7 @@ fun MyLibraryScreen(
                     show = showFilePicker,
                     onContentSelected = { uris ->
                         uris.forEach {  uri ->
-//                            val path = context.getPathFromUri(uri)
-//                            val file = uri.toFile()
-                            val path = uri.getFile(context)
-                            Log.d("anime", path.toString())
-                            path?.let {
-                                files.add(it)
-                            }
+                            uriss.add(uri)
                         }
 
                         showFilePicker = false
@@ -130,7 +126,7 @@ fun MyLibraryScreen(
         }
     } else {
         PdfViewer(
-            pdfStream = files[0].inputStream()
+            uri = uriss[0]
         )
     }
 }

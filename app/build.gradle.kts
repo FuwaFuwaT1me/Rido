@@ -55,13 +55,15 @@ android {
 }
 
 dependencies {
-    implementation(project(":source"))
     implementation(project(":core_network"))
     implementation(project(":core_data"))
     implementation(project(":core_domain"))
-    implementation(project(":util"))
     implementation(project(":feature_my_library"))
     implementation(project(":feature_viewer"))
+    implementation(project(":common"))
+    implementation(project(":common_compose"))
+    implementation(project(":source"))
+    implementation(project(":util"))
 
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-compiler:2.44")
