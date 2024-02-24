@@ -5,13 +5,14 @@ import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
@@ -27,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.imageLoader
 import coil.memory.MemoryCache
@@ -41,8 +41,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlin.math.sqrt
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PdfViewer(
     uri: Uri,
@@ -80,14 +80,21 @@ fun PdfViewer(
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
     ) {
-//        val a = with(LocalDensity.current) { maxWidth.toPx() }.toInt()
-//        val height = with(LocalDensity.current) { maxHeight.toPx() }.toInt()
+        val width = with(LocalDensity.current) { maxWidth.toPx() }.toInt()
+        val height = with(LocalDensity.current) { maxHeight.toPx() * 0.75 }.toInt()
         val pageCount by remember(renderer) { derivedStateOf { renderer?.pageCount ?: 0 } }
 
+        val listState = rememberLazyListState()
+        val snapFlingBehavior = rememberSnapFlingBehavior(listState)
+
         LazyColumnOrRow(
+            listState = listState,
             orientation = orientation,
             arrangement = arrangement,
-            modifier = modifier.background(backgroundColor).align(Alignment.Center)
+            flingBehavior = snapFlingBehavior,
+            modifier = modifier
+                .background(backgroundColor)
+                .align(Alignment.Center)
         ) {
             items(
                 count = pageCount,
@@ -95,15 +102,6 @@ fun PdfViewer(
             ) { index ->
                 val cacheKey = MemoryCache.Key("$uri-$index")
                 val cacheValue = imageLoader.memoryCache?.get(cacheKey)?.bitmap
-
-                var width = with(LocalDensity.current) { maxWidth.toPx() }.toInt()
-                var height = with(LocalDensity.current) { maxHeight.toPx() * 0.75 }.toInt()
-
-//                val page = renderer?.openPage(index)
-//                page?.let {
-//                    width = page.width
-//                    height = page.width
-//                }
 
                 var bitmap by remember {
                     mutableStateOf(cacheValue)
@@ -149,7 +147,6 @@ fun PdfViewer(
                         painter = rememberAsyncImagePainter(request),
                         modifier = Modifier
                             .background(Color.White)
-//                            .aspectRatio(1f / sqrt(2f))
                             .fillMaxWidth()
                     )
                 }
