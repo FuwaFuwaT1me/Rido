@@ -65,11 +65,9 @@ dependencies {
     implementation(project(":source"))
     implementation(project(":util"))
 
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-compiler:2.44")
-
-    implementation("com.google.dagger:dagger:2.48.1")
-    kapt("com.google.dagger:dagger-compiler:2.48.1")
+    implementation("com.google.dagger:hilt-android:2.50")
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("com.google.dagger:hilt-compiler:2.50")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 

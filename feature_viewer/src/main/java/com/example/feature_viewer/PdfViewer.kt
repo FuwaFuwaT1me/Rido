@@ -2,9 +2,9 @@ package com.example.feature_viewer
 
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
-import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -35,17 +35,17 @@ import coil.request.ImageRequest
 import com.example.common.LazyColumnOrRow
 import com.example.common.Orientation
 import com.example.common.ZoomableImage
-import com.example.util.getFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PdfViewer(
-    uri: Uri,
+    file: File,
     modifier: Modifier = Modifier,
     backgroundColor: Color = Color(0xFF909090),
     pageColor: Color = Color.White,
@@ -56,13 +56,18 @@ fun PdfViewer(
         currentPage: Int?,
         maxPage: Int?
     ) -> Unit = { _, _, _ -> },
+    onBackPressed: () -> Unit = {}
 ) {
+    BackHandler {
+        onBackPressed()
+    }
+
     val context = LocalContext.current
     val rendererScope = rememberCoroutineScope()
     val mutex = remember { Mutex() }
-    val renderer by produceState<PdfRenderer?>(null, uri) {
+    val renderer by produceState<PdfRenderer?>(null, file) {
         rendererScope.launch(Dispatchers.IO) {
-            val input = ParcelFileDescriptor.open(uri.getFile(context), ParcelFileDescriptor.MODE_READ_ONLY)
+            val input = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
             value = PdfRenderer(input)
         }
         awaitDispose {
@@ -80,6 +85,8 @@ fun PdfViewer(
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
     ) {
+        loadingListener(true, null, null)
+
         val width = with(LocalDensity.current) { maxWidth.toPx() }.toInt()
         val height = with(LocalDensity.current) { maxHeight.toPx() * 0.75 }.toInt()
         val pageCount by remember(renderer) { derivedStateOf { renderer?.pageCount ?: 0 } }
@@ -98,20 +105,20 @@ fun PdfViewer(
         ) {
             items(
                 count = pageCount,
-                key = { index -> "$uri-$index" }
+                key = { index -> "$file-$index" }
             ) { index ->
-                val cacheKey = MemoryCache.Key("$uri-$index")
+                val cacheKey = MemoryCache.Key("$file-$index")
                 val cacheValue = imageLoader.memoryCache?.get(cacheKey)?.bitmap
 
                 var bitmap by remember {
                     mutableStateOf(cacheValue)
                 }
                 if (bitmap == null) {
-                    DisposableEffect(uri, index) {
+                    DisposableEffect(file, index) {
                         val job = imageLoadingScope.launch(Dispatchers.IO) {
                             val destinationBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
                             mutex.withLock {
-                                Log.d("PdfGenerator", "Loading PDF $uri - page $index/$pageCount")
+                                Log.d("PdfGenerator", "Loading PDF $file - page $index/$pageCount")
                                 if (!coroutineContext.isActive) return@launch
 
                                 try {
@@ -129,6 +136,7 @@ fun PdfViewer(
                                     return@launch
                                 }
                             }
+
                             bitmap = destinationBitmap
                         }
                         onDispose {
@@ -141,6 +149,8 @@ fun PdfViewer(
                         .memoryCacheKey(cacheKey)
                         .data(bitmap)
                         .build()
+
+                    loadingListener(false, index, pageCount)
 
                     ZoomableImage(
                         contentScale = ContentScale.Fit,

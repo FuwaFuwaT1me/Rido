@@ -1,4 +1,4 @@
-package com.example.core_data.database
+package com.example.core_data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query

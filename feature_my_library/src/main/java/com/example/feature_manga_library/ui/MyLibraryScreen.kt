@@ -1,28 +1,24 @@
 package com.example.feature_manga_library.ui
 
-import android.Manifest
 import android.content.Context
-import android.database.Cursor
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,16 +31,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.core_domain.model.comics.manga.LocalMangaItem
 import com.example.core_domain.model.common.Source
 import com.example.core_domain.model.common.Status
+import com.example.core_domain.model.file.TitleFile
 import com.example.feature_manga_library.R
 import com.example.feature_manga_library.add_title.FilePicker
 import com.example.feature_manga_library.mvi.MyLibraryViewModel
 import com.example.feature_viewer.PdfViewer
 import com.example.util.convertToByteArray
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
+import com.example.util.getFile
 import java.io.File
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MyLibraryScreen(
     modifier: Modifier = Modifier,
@@ -63,27 +58,30 @@ fun MyLibraryScreen(
         mutableStateOf(false)
     }
 
-    val files = remember {
-        mutableStateListOf<File>()
-    }
-
-    val uriss = remember {
-        mutableStateListOf<Uri>()
-    }
+    val fileItems = myLibraryViewModel.titleFiles.collectAsState(emptyList())
 
     val context = LocalContext.current
 
-    val readPermission = Manifest.permission.READ_EXTERNAL_STORAGE
-    val permissionState = rememberPermissionState(readPermission)
+    var currentFile by remember {
+        mutableStateOf<File?>(null)
+    }
+
+    var loading by remember {
+        mutableStateOf(false)
+    }
 
     if (!showPdfViewer) {
         Box {
             LazyColumn(modifier = modifier) {
-                items(30) {
+                items(fileItems.value) {
                     ComicsLibraryItem(
+                        modifier = Modifier.clickable {
+                            currentFile = File(it.path)
+                            showPdfViewer = true
+                        },
                         comicsItem = LocalMangaItem(
                             id = "id",
-                            title = "Naruto",
+                            title = it.path,
                             totalChapters = 720,
                             currentChapter = 128,
                             localStatus = Status.Reading,
@@ -94,9 +92,6 @@ fun MyLibraryScreen(
             }
             FloatingActionButton(
                 onClick = {
-
-
-//                    permissionState.launchPermissionRequest()
                     showFilePicker = true
                 },
                 shape = RoundedCornerShape(12.dp),
@@ -114,21 +109,58 @@ fun MyLibraryScreen(
                 FilePicker(
                     show = showFilePicker,
                     onContentSelected = { uris ->
+                        val files = mutableListOf<TitleFile>()
+
                         uris.forEach {  uri ->
-                            uriss.add(uri)
+                            files.add(TitleFile(saveFile(context, uri)))
                         }
 
+                        myLibraryViewModel.saveFiles(files)
+
                         showFilePicker = false
-                        showPdfViewer = true
                     }
                 )
             }
         }
     } else {
-        PdfViewer(
-            uri = uriss[0]
-        )
+        currentFile?.let {
+            Box {
+                if (loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                PdfViewer(
+                    file = it,
+                    loadingListener = { isLoading, currentPage, maxPage ->
+                        loading = isLoading
+                    },
+                    onBackPressed = {
+                        showPdfViewer = false
+                    }
+                )
+            }
+
+        }
     }
+}
+
+fun File.copyTo(file: File) {
+    inputStream().use { input ->
+        file.outputStream().use { output ->
+            input.copyTo(output)
+        }
+    }
+}
+
+fun saveFile(context: Context, uri: Uri): String {
+    val file = uri.getFile(context)
+    val localDirectory = context.filesDir
+    val newFile = File("${localDirectory.absolutePath}/${file?.name}")
+
+    file?.copyTo(newFile)
+
+    return newFile.absolutePath
 }
 
 @Preview
