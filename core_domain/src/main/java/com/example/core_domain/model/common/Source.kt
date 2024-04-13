@@ -5,8 +5,8 @@ sealed interface Source<T> {
     val resource: T
 
     class Local(
-        override val resource: ByteArray,
-    ) : Source<ByteArray>
+        override val resource: String?,
+    ) : Source<String?>
 
     class Remote(
         override val resource: String,

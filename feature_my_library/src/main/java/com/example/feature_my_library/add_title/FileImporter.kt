@@ -1,17 +1,11 @@
-package com.example.feature_manga_library.add_title
+package com.example.feature_my_library.add_title
 
-import android.content.Context
 import android.net.Uri
-import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 
 private val SUPPORTED_FILE_TYPES = listOf(
     "pdf",

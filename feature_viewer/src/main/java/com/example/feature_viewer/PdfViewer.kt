@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +43,12 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
 
+data class PdfViewerState(
+    val isLoading: Boolean,
+    val currentPage: Int?,
+    val maxPage: Int?,
+)
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PdfViewer(
@@ -52,14 +59,24 @@ fun PdfViewer(
     orientation: Orientation = Orientation.HORIZONTAL,
     arrangement: Arrangement.HorizontalOrVertical = Arrangement.Center,
     loadingListener: (
-        isLoading: Boolean,
-        currentPage: Int?,
-        maxPage: Int?
-    ) -> Unit = { _, _, _ -> },
+        currentState: PdfViewerState,
+        lastState: PdfViewerState
+    ) -> Unit = { _, _ -> },
     onBackPressed: () -> Unit = {}
 ) {
     BackHandler {
         onBackPressed()
+    }
+
+    var lastState by remember {
+        mutableStateOf(PdfViewerState(false, null, null))
+    }
+
+    fun updateState(newState: PdfViewerState) {
+        if (newState != lastState) {
+            loadingListener(newState, lastState)
+            lastState = newState
+        }
     }
 
     val context = LocalContext.current
@@ -85,7 +102,9 @@ fun PdfViewer(
     BoxWithConstraints(
         modifier = modifier.fillMaxSize()
     ) {
-        loadingListener(true, null, null)
+        LaunchedEffect(Unit) {
+            updateState(PdfViewerState(true, null, null))
+        }
 
         val width = with(LocalDensity.current) { maxWidth.toPx() }.toInt()
         val height = with(LocalDensity.current) { maxHeight.toPx() * 0.75 }.toInt()
@@ -150,7 +169,9 @@ fun PdfViewer(
                         .data(bitmap)
                         .build()
 
-                    loadingListener(false, index, pageCount)
+                    LaunchedEffect(Unit) {
+                        updateState(PdfViewerState(false, index, pageCount))
+                    }
 
                     ZoomableImage(
                         contentScale = ContentScale.Fit,

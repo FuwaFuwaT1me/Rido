@@ -1,8 +1,5 @@
-package com.example.feature_manga_library.ui
+package com.example.feature_my_library.ui
 
-import android.content.Context
-import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -17,6 +14,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,13 +29,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.core_domain.model.comics.manga.LocalMangaItem
 import com.example.core_domain.model.common.Source
 import com.example.core_domain.model.common.Status
-import com.example.core_domain.model.file.TitleFile
-import com.example.feature_manga_library.R
-import com.example.feature_manga_library.add_title.FilePicker
-import com.example.feature_manga_library.mvi.MyLibraryViewModel
+import com.example.feature_my_library.add_title.FilePicker
+import com.example.feature_my_library.mvi.MyLibraryViewModel
 import com.example.feature_viewer.PdfViewer
-import com.example.util.convertToByteArray
-import com.example.util.getFile
+import com.example.util.getFirstPdfImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 @Composable
@@ -45,11 +43,6 @@ fun MyLibraryScreen(
     modifier: Modifier = Modifier,
     myLibraryViewModel: MyLibraryViewModel = hiltViewModel(),
 ) {
-    val testImage = BitmapFactory.decodeResource(
-        LocalContext.current.resources,
-        R.drawable.test_image
-    ).convertToByteArray()
-
     var showFilePicker by remember {
         mutableStateOf(false)
     }
@@ -70,22 +63,41 @@ fun MyLibraryScreen(
         mutableStateOf(false)
     }
 
+    Box {
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+
     if (!showPdfViewer) {
         Box {
             LazyColumn(modifier = modifier) {
-                items(fileItems.value) {
+                items(fileItems.value) { titleFile ->
+                    val file = File(titleFile.path)
+                    var cover: String? by remember {
+                        mutableStateOf(null)
+                    }
+
+                    LaunchedEffect(Unit) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            cover = getFirstPdfImage(file)
+                        }
+                    }
+
                     ComicsLibraryItem(
                         modifier = Modifier.clickable {
-                            currentFile = File(it.path)
+                            currentFile = file
                             showPdfViewer = true
                         },
                         comicsItem = LocalMangaItem(
                             id = "id",
-                            title = it.path,
+                            title = titleFile.path,
                             totalChapters = 720,
                             currentChapter = 128,
                             localStatus = Status.Reading,
-                            source = Source.Local(testImage)
+                            source = Source.Local(cover)
                         )
                     )
                 }
@@ -109,14 +121,7 @@ fun MyLibraryScreen(
                 FilePicker(
                     show = showFilePicker,
                     onContentSelected = { uris ->
-                        val files = mutableListOf<TitleFile>()
-
-                        uris.forEach {  uri ->
-                            files.add(TitleFile(saveFile(context, uri)))
-                        }
-
-                        myLibraryViewModel.saveFiles(files)
-
+                        myLibraryViewModel.saveFiles(uris, context.filesDir)
                         showFilePicker = false
                     }
                 )
@@ -125,15 +130,10 @@ fun MyLibraryScreen(
     } else {
         currentFile?.let {
             Box {
-                if (loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
                 PdfViewer(
                     file = it,
-                    loadingListener = { isLoading, currentPage, maxPage ->
-                        loading = isLoading
+                    loadingListener = { currentState, lastState ->
+                        loading = currentState.isLoading
                     },
                     onBackPressed = {
                         showPdfViewer = false
@@ -151,16 +151,6 @@ fun File.copyTo(file: File) {
             input.copyTo(output)
         }
     }
-}
-
-fun saveFile(context: Context, uri: Uri): String {
-    val file = uri.getFile(context)
-    val localDirectory = context.filesDir
-    val newFile = File("${localDirectory.absolutePath}/${file?.name}")
-
-    file?.copyTo(newFile)
-
-    return newFile.absolutePath
 }
 
 @Preview

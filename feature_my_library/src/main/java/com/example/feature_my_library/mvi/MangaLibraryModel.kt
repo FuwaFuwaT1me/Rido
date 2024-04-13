@@ -1,6 +1,5 @@
-package com.example.feature_manga_library.mvi
+package com.example.feature_my_library.mvi
 
-import com.example.core.mvi.api.MviNavigationEvent
 import com.example.core.mvi.impl.BaseModel
 import com.example.core.mvi.impl.NavigationEvent
 import kotlinx.coroutines.CoroutineScope

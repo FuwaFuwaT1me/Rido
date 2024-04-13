@@ -1,4 +1,4 @@
-package com.example.feature_manga_library
+package com.example.feature_my_library
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.feature_manga_library"
+    namespace = "com.example.feature_my_library"
     compileSdk = 34
 
     defaultConfig {

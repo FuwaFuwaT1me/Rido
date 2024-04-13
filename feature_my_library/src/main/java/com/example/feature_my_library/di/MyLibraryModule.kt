@@ -1,9 +1,11 @@
-package com.example.feature_manga_library.di
+package com.example.feature_my_library.di
 
-import com.example.feature_manga_library.mvi.MyLibraryState
+import android.content.Context
+import com.example.feature_my_library.mvi.MyLibraryState
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +29,12 @@ interface MyLibraryModule {
         @Provides
         fun provideDefaultCoroutineScope(): CoroutineScope {
             return CoroutineScope(Dispatchers.Default)
+        }
+
+        @Singleton
+        @Provides
+        fun provideApplicationContext(@ApplicationContext context: Context): Context {
+            return context
         }
     }
 }
