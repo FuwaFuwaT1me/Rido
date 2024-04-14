@@ -6,5 +6,6 @@ import androidx.room.PrimaryKey
 @Entity
 data class TitleFileDto(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val path: String
+    val path: String,
+    val coverPath: String
 )

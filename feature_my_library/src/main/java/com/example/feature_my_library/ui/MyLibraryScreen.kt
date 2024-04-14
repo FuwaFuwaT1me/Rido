@@ -14,7 +14,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,11 +30,8 @@ import com.example.core_domain.model.common.Source
 import com.example.core_domain.model.common.Status
 import com.example.feature_my_library.add_title.FilePicker
 import com.example.feature_my_library.mvi.MyLibraryViewModel
+import com.example.feature_my_library.mvi.SaveFilesAction
 import com.example.feature_viewer.PdfViewer
-import com.example.util.getFirstPdfImage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.File
 
 @Composable
@@ -43,6 +39,8 @@ fun MyLibraryScreen(
     modifier: Modifier = Modifier,
     myLibraryViewModel: MyLibraryViewModel = hiltViewModel(),
 ) {
+    myLibraryViewModel.init()
+
     var showFilePicker by remember {
         mutableStateOf(false)
     }
@@ -76,15 +74,6 @@ fun MyLibraryScreen(
             LazyColumn(modifier = modifier) {
                 items(fileItems.value) { titleFile ->
                     val file = File(titleFile.path)
-                    var cover: String? by remember {
-                        mutableStateOf(null)
-                    }
-
-                    LaunchedEffect(Unit) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            cover = getFirstPdfImage(file)
-                        }
-                    }
 
                     ComicsLibraryItem(
                         modifier = Modifier.clickable {
@@ -97,7 +86,7 @@ fun MyLibraryScreen(
                             totalChapters = 720,
                             currentChapter = 128,
                             localStatus = Status.Reading,
-                            source = Source.Local(cover)
+                            source = Source.Local(titleFile.coverPath)
                         )
                     )
                 }
@@ -121,7 +110,7 @@ fun MyLibraryScreen(
                 FilePicker(
                     show = showFilePicker,
                     onContentSelected = { uris ->
-                        myLibraryViewModel.saveFiles(uris, context.filesDir)
+                        myLibraryViewModel.sendAction(SaveFilesAction(uris))
                         showFilePicker = false
                     }
                 )

@@ -24,7 +24,9 @@ interface AppModule {
                 applicationContext,
                 RidoDatabase::class.java,
                 "rido_database"
-            ).build()
+            )
+                .fallbackToDestructiveMigration()
+                .build()
         }
 
         @Singleton

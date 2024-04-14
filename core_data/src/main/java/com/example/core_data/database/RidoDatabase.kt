@@ -7,7 +7,7 @@ import com.example.core_data.dto.TitleFileDto
 
 @Database(entities = [
     TitleFileDto::class
-], version = 1)
+], version = 2)
 abstract class RidoDatabase: RoomDatabase() {
 
     abstract fun getTitleFileDao(): TitleFileDao

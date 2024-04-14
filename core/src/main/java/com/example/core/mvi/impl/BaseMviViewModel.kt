@@ -26,8 +26,7 @@ abstract class BaseMviViewModel<ViewAction, ViewEvent, ViewState, NavEvent> : Vi
     private val router: BaseRouter = BaseRouter()
     private val actions: Actions<ViewAction> = BaseActions(scope)
 
-    val viewActions: Flow<ViewAction>
-        get() = actions.viewActions
+    private val viewActions: Flow<ViewAction> = actions.viewActions
 
     abstract fun onViewEvent(event: ViewEvent)
     abstract fun onChangeState(state: ViewState)
@@ -58,6 +57,12 @@ abstract class BaseMviViewModel<ViewAction, ViewEvent, ViewState, NavEvent> : Vi
         scope.launch {
             model.navigationEvent.collect { navEvent ->
                 router.onNavigationEvent(navEvent)
+            }
+        }
+
+        scope.launch {
+            viewActions.collect { viewAction ->
+                model.onViewAction(viewAction)
             }
         }
     }
