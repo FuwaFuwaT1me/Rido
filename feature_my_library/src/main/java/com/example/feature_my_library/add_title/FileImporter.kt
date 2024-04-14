@@ -15,7 +15,6 @@ private val SUPPORTED_FILE_TYPES = listOf(
 
 @Composable
 fun FilePicker(
-    show: Boolean,
     onContentSelected: (List<Uri>) -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(
@@ -29,9 +28,7 @@ fun FilePicker(
         mimeTypeMap.getMimeTypeFromExtension(ext)
     }.toTypedArray()
 
-    LaunchedEffect(show) {
-        if (show) {
+    LaunchedEffect(Unit) {
             launcher.launch(mimeTypes)
-        }
     }
 }

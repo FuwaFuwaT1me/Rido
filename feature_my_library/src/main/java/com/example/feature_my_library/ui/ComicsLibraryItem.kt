@@ -29,7 +29,7 @@ fun ComicsLibraryItem(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(comicsItem.source.resource)
+                .data(comicsItem.file.coverPath)
                 .build(),
             contentDescription = "Bitmap image",
             contentScale = ContentScale.Crop,

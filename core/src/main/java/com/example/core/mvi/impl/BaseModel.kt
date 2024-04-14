@@ -2,10 +2,10 @@ package com.example.core.mvi.impl
 
 import androidx.annotation.CallSuper
 import com.example.core.mvi.api.Action
-import com.example.core.mvi.api.ModelNavigationEvent
 import com.example.core.mvi.api.Event
 import com.example.core.mvi.api.Events
 import com.example.core.mvi.api.Model
+import com.example.core.mvi.api.ModelNavigationEvent
 import com.example.core.mvi.api.ModelState
 import com.example.core.mvi.api.MviNavigationEvent
 import com.example.core.mvi.api.State
@@ -35,11 +35,11 @@ abstract class BaseModel<ViewState, ViewAction, ViewEvent, NavEvent>(
     override val navigationEvent: Flow<NavEvent>
         get() = modelNavigationEvent.navigationEvent
 
-    protected fun sendViewEvent(event: ViewEvent) {
+    fun sendViewEvent(event: ViewEvent) {
         modelEvents.sendViewEvent(event)
     }
 
-    protected fun sendNavigationEvent(event: NavEvent) {
+    fun sendNavigationEvent(event: NavEvent) {
         modelNavigationEvent.sendNavigationEvent(event)
     }
 

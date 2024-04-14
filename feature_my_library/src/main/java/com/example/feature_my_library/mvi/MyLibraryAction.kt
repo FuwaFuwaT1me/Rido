@@ -8,3 +8,6 @@ sealed interface MyLibraryAction : Action
 data class SaveFilesAction(
     val uris: List<Uri>
 ) : MyLibraryAction
+
+data object OpenFilePickerAction : MyLibraryAction
+data object CloseFilePickerAction : MyLibraryAction

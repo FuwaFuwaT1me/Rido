@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
 //    id("com.google.devtools.ksp")
     id("kotlin-kapt")
+    id("kotlinx-serialization")
 }
 
 android {
@@ -38,4 +39,5 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("com.google.dagger:dagger:2.48.1")
     kapt("com.google.dagger:dagger-compiler:2.48.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 }

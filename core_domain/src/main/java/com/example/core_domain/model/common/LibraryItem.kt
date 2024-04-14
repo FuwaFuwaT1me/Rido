@@ -4,4 +4,5 @@ interface LibraryItem {
 
     val id: String
     val title: String
+    val file: FileData
 }

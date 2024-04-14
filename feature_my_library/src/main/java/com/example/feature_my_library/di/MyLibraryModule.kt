@@ -21,7 +21,8 @@ interface MyLibraryModule {
         @Provides
         fun provideDefaultState(): MyLibraryState {
             return MyLibraryState(
-                libraryItems = listOf()
+                libraryItems = listOf(),
+                showFilePicker = false
             )
         }
 

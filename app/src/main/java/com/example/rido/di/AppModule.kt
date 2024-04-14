@@ -3,7 +3,8 @@ package com.example.rido.di
 import android.content.Context
 import androidx.room.Room
 import com.example.core_data.database.RidoDatabase
-import com.example.core_data.database.dao.TitleFileDao
+import com.example.core_data.database.dao.ImageFileDao
+import com.example.core_data.database.dao.PdfFileDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,8 +32,14 @@ interface AppModule {
 
         @Singleton
         @Provides
-        fun provideTitleFileDao(database: RidoDatabase): TitleFileDao {
-            return database.getTitleFileDao()
+        fun providePdfFileDao(database: RidoDatabase): PdfFileDao {
+            return database.getPdfFileDao()
+        }
+
+        @Singleton
+        @Provides
+        fun provideImageFileDao(database: RidoDatabase): ImageFileDao {
+            return database.getImageFileDao()
         }
     }
 }
