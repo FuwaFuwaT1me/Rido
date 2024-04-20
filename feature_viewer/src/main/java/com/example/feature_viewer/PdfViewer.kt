@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -62,12 +61,7 @@ fun PdfViewer(
         currentState: PdfViewerState,
         lastState: PdfViewerState
     ) -> Unit = { _, _ -> },
-    onBackPressed: () -> Unit = {}
 ) {
-    BackHandler {
-        onBackPressed()
-    }
-
     var lastState by remember {
         mutableStateOf(PdfViewerState(false, null, null))
     }

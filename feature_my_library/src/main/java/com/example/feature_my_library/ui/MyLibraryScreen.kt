@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.core_domain.model.comics.manga.LocalMangaItem
 import com.example.core_domain.model.common.Source
 import com.example.core_domain.model.common.Status
@@ -32,11 +33,13 @@ import com.example.feature_my_library.add_title.FilePicker
 import com.example.feature_my_library.mvi.MyLibraryViewModel
 import com.example.feature_my_library.mvi.OpenFilePickerAction
 import com.example.feature_my_library.mvi.SaveFilesAction
-import com.example.feature_viewer.PdfViewer
+import com.example.feature_viewer.ReaderDataBundle
 import java.io.File
 
 @Composable
 fun MyLibraryScreen(
+    navController: NavController,
+    navigateToReaderScreen: (ReaderDataBundle) -> Unit,
     modifier: Modifier = Modifier,
     myLibraryViewModel: MyLibraryViewModel = hiltViewModel(),
 ) {
@@ -48,10 +51,6 @@ fun MyLibraryScreen(
 
     var showPdfViewer by remember {
         mutableStateOf(false)
-    }
-
-    var currentFile by remember {
-        mutableStateOf<File?>(null)
     }
 
     var loading by remember {
@@ -70,12 +69,13 @@ fun MyLibraryScreen(
         Box {
             LazyColumn(modifier = modifier) {
                 items(state.libraryItems) { libraryItem ->
-                    val file = File(libraryItem.file.path)
-
                     ComicsLibraryItem(
                         modifier = Modifier.clickable {
-                            currentFile = file
-                            showPdfViewer = true
+//                            navController.navigate("reader_screen/${libraryItem.file.path}")
+                            val readerDataBundle = ReaderDataBundle(
+                                filePath = libraryItem.file.path
+                            )
+                            navigateToReaderScreen(readerDataBundle)
                         },
                         comicsItem = LocalMangaItem(
                             id = "id",
@@ -109,20 +109,20 @@ fun MyLibraryScreen(
             }
         }
     } else {
-        currentFile?.let {
-            Box {
-                PdfViewer(
-                    file = it,
-                    loadingListener = { currentState, lastState ->
-                        loading = currentState.isLoading
-                    },
-                    onBackPressed = {
-                        showPdfViewer = false
-                    }
-                )
-            }
-
-        }
+//        currentFile?.let {
+//            Box {
+//                PdfViewer(
+//                    file = it,
+//                    loadingListener = { currentState, lastState ->
+//                        loading = currentState.isLoading
+//                    },
+//                    onBackPressed = {
+//                        showPdfViewer = false
+//                    }
+//                )
+//            }
+//
+//        }
     }
 }
 
@@ -147,6 +147,6 @@ fun File.copyTo(file: File) {
 @Composable
 fun MyLibraryScreenPreview() {
     Surface {
-        MyLibraryScreen()
+//        MyLibraryScreen()
     }
 }

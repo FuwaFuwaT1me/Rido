@@ -4,6 +4,8 @@ plugins {
 //    id("com.google.devtools.ksp")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("kotlinx-serialization")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -59,6 +61,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
 
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("androidx.compose.runtime:runtime:1.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
