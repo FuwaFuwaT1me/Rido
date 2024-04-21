@@ -1,8 +1,6 @@
 package com.example.core.mvi.api
 
-import com.example.core.mvi.impl.NavigationEvent
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface Model<ViewState, ViewAction, ViewEvent, NavEvent>
@@ -17,6 +15,8 @@ interface Model<ViewState, ViewAction, ViewEvent, NavEvent>
     val navigationEvent: Flow<NavEvent>
 
     fun onViewAction(action: ViewAction)
+
+    fun sendNavigationEvent(navEvent: NavEvent)
 
     fun clean()
 }

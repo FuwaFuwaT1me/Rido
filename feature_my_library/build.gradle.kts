@@ -50,7 +50,6 @@ dependencies {
     implementation(project(":core_domain"))
     implementation(project(":core"))
     implementation(project(":util"))
-    implementation(project(":feature_viewer"))
     implementation(project(":common"))
 
     implementation("com.google.accompanist:accompanist-permissions:0.20.0")
@@ -58,6 +57,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.50")
     kapt("com.google.dagger:hilt-compiler:2.50")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation("com.google.code.gson:gson:2.10.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.6")
 

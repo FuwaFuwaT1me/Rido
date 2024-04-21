@@ -8,13 +8,4 @@ import javax.inject.Inject
 @HiltViewModel
 class MyLibraryViewModel @Inject constructor(
     override val model: MyLibraryModel,
-) : BaseMviViewModel<MyLibraryAction, MyLibraryEvent, MyLibraryState, NavigationEvent>() {
-
-    override fun onViewEvent(event: MyLibraryEvent) {
-
-    }
-
-    override fun onChangeState(state: MyLibraryState) {
-
-    }
-}
+) : BaseMviViewModel<MyLibraryAction, MyLibraryEvent, MyLibraryState, NavigationEvent>()

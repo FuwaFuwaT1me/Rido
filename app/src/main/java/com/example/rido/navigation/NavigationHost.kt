@@ -1,16 +1,17 @@
 package com.example.rido.navigation
 
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.feature_my_library.ui.MyLibraryScreen
+import com.example.feature_my_library.navigation.MyLibraryNavRoot
+import com.example.feature_my_library.navigation.MyLibraryNavScreen
 import com.example.feature_viewer.ReaderDataBundle
 import com.example.feature_viewer.ReaderDataBundleNavType
 import com.example.feature_viewer.ReaderScreen
+import com.example.feature_viewer.navigation.ReaderNavScreen
 import com.google.gson.Gson
 
 @Composable
@@ -23,21 +24,26 @@ fun NavigationHost() {
         startDestination = Scenario.LibraryScenario.name
     ) {
         navigation(
-            startDestination = Screen.MyLibraryScreen.name,
+            startDestination = MyLibraryNavScreen.name,
             route = Scenario.LibraryScenario.name
         ) {
-            composable(Screen.MyLibraryScreen.name) {
-                MyLibraryScreen(
-                    navController = navController,
-                    navigateToReaderScreen = { readerDataBundle ->
-                        val json = Uri.encode(gson.toJson(readerDataBundle))
+//            composable(Screen.MyLibraryScreen.name) {
+//                MyLibraryScreen(
+//                    navigateToReaderScreen = { readerDataBundle ->
+//                        val json = Uri.encode(gson.toJson(readerDataBundle))
+//
+//                        navController.navigate("${Screen.ReaderScreen.name}/$json")
+//                    }
+//                )
+//            }
+            MyLibraryNavRoot(this)
+            // { readerDataBundle ->
+            //                val json = Uri.encode(gson.toJson(readerDataBundle))
+            //                navController.navigate("${ReaderNavScreen.name}/$json")
+            //            }
 
-                        navController.navigate("${Screen.ReaderScreen.name}/$json")
-                    }
-                )
-            }
             composable(
-                "${Screen.ReaderScreen.name}/{${ReaderDataBundle.NAME}}",
+                "${ReaderNavScreen.name}/{${ReaderDataBundle.NAME}}",
                 arguments = listOf(
                     navArgument(ReaderDataBundle.NAME) {
                         type = ReaderDataBundleNavType()
