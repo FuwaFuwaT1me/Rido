@@ -55,11 +55,13 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature_my_library:api"))
+    implementation(project(":feature_my_library:impl"))
+    implementation(project(":feature_viewer:api"))
+    implementation(project(":feature_viewer:impl"))
     implementation(project(":core_network"))
     implementation(project(":core_data"))
     implementation(project(":core_domain"))
-    implementation(project(":feature_my_library"))
-    implementation(project(":feature_viewer"))
     implementation(project(":common"))
     implementation(project(":common_compose"))
     implementation(project(":source"))
@@ -68,6 +70,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.50")
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("com.google.dagger:hilt-compiler:2.50")
+
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     implementation("com.google.code.gson:gson:2.10.1")
 
