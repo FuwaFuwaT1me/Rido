@@ -35,12 +35,8 @@ abstract class BaseModel<ViewState, ViewAction, ViewEvent, NavEvent>(
     override val navigationEvent: Flow<NavEvent>
         get() = modelNavigationEvent.navigationEvent
 
-    fun sendViewEvent(event: ViewEvent) {
-        modelEvents.sendViewEvent(event)
-    }
-
-    fun sendNavigationEvent(event: NavEvent) {
-        modelNavigationEvent.sendNavigationEvent(event)
+    override fun sendNavigationEvent(navEvent: NavEvent) {
+        modelNavigationEvent.sendNavigationEvent(navEvent)
     }
 
     protected fun updateState(updateViewState: ViewState.() -> ViewState) {

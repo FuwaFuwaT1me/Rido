@@ -17,7 +17,11 @@
             <option value="$PROJECT_DIR$/core_domain" />
             <option value="$PROJECT_DIR$/core_network" />
             <option value="$PROJECT_DIR$/feature_my_library" />
+            <option value="$PROJECT_DIR$/feature_my_library/api" />
+            <option value="$PROJECT_DIR$/feature_my_library/impl" />
             <option value="$PROJECT_DIR$/feature_viewer" />
+            <option value="$PROJECT_DIR$/feature_viewer/api" />
+            <option value="$PROJECT_DIR$/feature_viewer/impl" />
             <option value="$PROJECT_DIR$/source" />
             <option value="$PROJECT_DIR$/util" />
           </set>
