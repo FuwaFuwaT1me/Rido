@@ -12,7 +12,7 @@ class BaseModelNavigationEvent<NavEvent : MviNavigationEvent> (
     private val scope: CoroutineScope
 ) : ModelNavigationEvent<NavEvent> {
 
-    private val _navigationEvent = MutableSharedFlow<NavEvent>(replay = 1)
+    private val _navigationEvent = MutableSharedFlow<NavEvent>(replay = 0)
     override val navigationEvent: Flow<NavEvent>
         get() = _navigationEvent
 

@@ -1,9 +1,12 @@
 package com.example.common
 
+import android.annotation.SuppressLint
 import android.net.Uri
-import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.common.navigation.DataBundle
 import com.example.core.mvi.api.Action
@@ -14,16 +17,13 @@ import com.example.core.mvi.impl.BaseNavigationEvent
 import com.example.core.mvi.impl.BaseViewModel
 import com.google.gson.Gson
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun BaseScreen(
     navController: NavController,
     viewModel: BaseViewModel<out Action, out Event, out State, out MviNavigationEvent>,
-    content: @Composable () -> Unit
+    content: @Composable (NavController) -> Unit
 ) {
-    BackHandler {
-        navController.navigateUp()
-    }
-
     LaunchedEffect(Unit) {
         viewModel.model.navigationEvent.collect { navEvent ->
             when (navEvent) {
@@ -41,7 +41,9 @@ fun BaseScreen(
         }
     }
 
-    content()
+    Scaffold(modifier = Modifier.fillMaxSize()) {
+        content(navController)
+    }
 }
 
 private fun buildRoute(route: String, dataBundle: DataBundle): String {

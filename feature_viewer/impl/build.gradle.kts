@@ -56,6 +56,8 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:2.50")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
+    implementation("androidx.compose.material3:material3:1.2.1")
+
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.1")
 
     implementation("androidx.core:core-ktx:1.12.0")

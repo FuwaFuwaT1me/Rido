@@ -57,23 +57,24 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:2.50")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.1")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.6")
 
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
 
     implementation("io.coil-kt:coil-compose:2.5.0")
 
     implementation("com.google.code.gson:gson:2.10.1")
 
-    implementation("androidx.compose.runtime:runtime:1.6.1")
+    implementation("androidx.compose.runtime:runtime:1.6.6")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation(platform("androidx.compose:compose-bom:2024.01.00"))
-    implementation("androidx.compose.ui:ui:1.6.1")
-    implementation("androidx.compose.ui:ui-graphics:1.6.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.1")
-    implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.core:core-ktx:1.13.0")
+    implementation(platform("androidx.compose:compose-bom:2024.04.01"))
+    implementation("androidx.compose.ui:ui:1.6.6")
+    implementation("androidx.compose.ui:ui-graphics:1.6.6")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.6.6")
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.compose.material:material:1.6.6")
 
     implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

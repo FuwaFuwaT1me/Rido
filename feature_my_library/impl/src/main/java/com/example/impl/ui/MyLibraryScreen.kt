@@ -1,7 +1,9 @@
 package com.example.impl.ui
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,12 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.api.navigation.NavigateToReader
 import com.example.api.navigation.ReaderDataBundle
+import com.example.common.navigation.DataBundle
 import com.example.core_domain.model.comics.manga.LocalMangaItem
 import com.example.core_domain.model.common.Source
 import com.example.core_domain.model.common.Status
@@ -29,6 +33,8 @@ import com.example.impl.add_title.FilePicker
 import com.example.impl.mvi.MyLibraryViewModel
 import com.example.impl.mvi.OpenFilePickerAction
 import com.example.impl.mvi.SaveFilesAction
+import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import java.io.File
 
 @Composable
@@ -42,17 +48,23 @@ fun MyLibraryScreen(
 
     val state by myLibraryViewModel.model.viewState.collectAsState()
 
-    Box {
+    val scope = rememberCoroutineScope()
+
+    Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = modifier) {
             items(state.libraryItems) { libraryItem ->
                 ComicsLibraryItem(
                     modifier = Modifier.clickable {
-                        val readerDataBundle = ReaderDataBundle(
-                            filePath = libraryItem.file.path
-                        )
+                        scope.launch {
+                            val readerDataBundle = ReaderDataBundle(
+                                filePath = libraryItem.file.path
+                            )
 
-                        val navEvent = NavigateToReader(readerDataBundle)
-                        myLibraryViewModel.sendNavigationEvent(navEvent)
+                            val navEvent = NavigateToReader(readerDataBundle)
+                            myLibraryViewModel.sendNavigationEvent(navEvent)
+                        }
+
+//                        navController.navigate(buildRoute("reader_screen", readerDataBundle))
                     },
                     comicsItem = LocalMangaItem(
                         id = "id",
@@ -86,6 +98,11 @@ fun MyLibraryScreen(
             MyFilePicker(myLibraryViewModel = myLibraryViewModel)
         }
     }
+}
+
+private fun buildRoute(route: String, dataBundle: DataBundle): String {
+    val encodedDataBundle = Uri.encode(Gson().toJson(dataBundle))
+    return "$route/$encodedDataBundle"
 }
 
 @Composable
