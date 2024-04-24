@@ -8,4 +8,4 @@ import javax.inject.Inject
 @HiltViewModel
 class MyLibraryViewModel @Inject constructor(
     override val model: MyLibraryModel,
-) : BaseViewModel<MyLibraryAction, MyLibraryEvent, MyLibraryState, BaseNavigationEvent>()
+) : BaseViewModel<MyLibraryAction, MyLibraryState, BaseNavigationEvent>()

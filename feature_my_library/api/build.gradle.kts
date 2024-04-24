@@ -41,7 +41,7 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(project(":common"))
-    implementation(project(":feature_viewer:api"))
+    implementation(project(":feature_reader:api"))
 
     implementation("androidx.navigation:navigation-compose:2.7.7")
 

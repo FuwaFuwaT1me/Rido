@@ -3,7 +3,6 @@ package com.example.core.mvi.impl
 import androidx.lifecycle.ViewModel
 import com.example.core.mvi.api.Action
 import com.example.core.mvi.api.Actions
-import com.example.core.mvi.api.Event
 import com.example.core.mvi.api.Model
 import com.example.core.mvi.api.MviNavigationEvent
 import com.example.core.mvi.api.State
@@ -13,14 +12,13 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<ViewAction, ViewEvent, ViewState, NavEvent> : ViewModel()
+abstract class BaseViewModel<ViewAction, ViewState, NavEvent> : ViewModel()
         where ViewAction : Action,
-              ViewEvent : Event,
               ViewState : State,
               NavEvent : MviNavigationEvent
 {
 
-    abstract val model: Model<ViewState, ViewAction, ViewEvent, NavEvent>
+    abstract val model: Model<ViewState, ViewAction, NavEvent>
 
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
     private val actions: Actions<ViewAction> = BaseActions(scope)

@@ -24,7 +24,7 @@ class MyLibraryModel @Inject constructor(
     private val applicationContext: Context,
     private val libraryItemsProvider: LibraryItemsProvider,
     private val pdfFileDao: PdfFileDao,
-) : BaseModel<MyLibraryState, MyLibraryAction, MyLibraryEvent, BaseNavigationEvent>(
+) : BaseModel<MyLibraryState, MyLibraryAction, BaseNavigationEvent>(
     defaultViewState, scope
 ) {
 

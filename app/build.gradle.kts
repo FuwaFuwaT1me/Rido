@@ -57,8 +57,8 @@ android {
 dependencies {
     implementation(project(":feature_my_library:api"))
     implementation(project(":feature_my_library:impl"))
-    implementation(project(":feature_viewer:api"))
-    implementation(project(":feature_viewer:impl"))
+    implementation(project(":feature_reader:api"))
+    implementation(project(":feature_reader:impl"))
     implementation(project(":core_network"))
     implementation(project(":core_data"))
     implementation(project(":core_domain"))

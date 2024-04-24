@@ -44,7 +44,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":feature_viewer:api"))
+    implementation(project(":feature_reader:api"))
     implementation(project(":core_data"))
     implementation(project(":core_domain"))
     implementation(project(":core"))

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.feature_viewer"
+    namespace = "com.example.feature_reader"
     compileSdk = 34
 
     defaultConfig {

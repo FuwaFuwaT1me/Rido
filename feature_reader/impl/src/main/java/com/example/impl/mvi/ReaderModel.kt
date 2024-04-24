@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ReaderModel @Inject constructor(
     defaultViewState: ReaderState,
     scope: CoroutineScope
-) : BaseModel<ReaderState, ReaderAction, ReaderEvent, BaseNavigationEvent>(
+) : BaseModel<ReaderState, ReaderAction, BaseNavigationEvent>(
     defaultViewState, scope
 ) {
 

@@ -2,6 +2,7 @@ package com.example.impl.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -23,7 +24,7 @@ fun ComicsLibraryItem(
     val percent = ((comicsItem.currentChapter * 1.0 / comicsItem.totalChapters) * 100).toInt()
 
     Row(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
