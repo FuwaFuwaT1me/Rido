@@ -23,9 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.api.navigation.NavigateToReader
 import com.example.api.navigation.ReaderDataBundle
-import com.example.core_domain.model.comics.manga.LocalMangaItem
-import com.example.core_domain.model.common.Source
-import com.example.core_domain.model.common.Status
+import com.example.core_domain.model.comics.ComicsItem
 import com.example.impl.file.FilePicker
 import com.example.impl.mvi.MyLibraryViewModel
 import com.example.impl.mvi.OpenFilePickerAction
@@ -48,20 +46,15 @@ fun MyLibraryScreen(
             items(state.libraryItems) { libraryItem ->
                 ComicsLibraryItem(
                     modifier = Modifier.clickable {
-                        val readerDataBundle = ReaderDataBundle(
-                            filePath = libraryItem.file.path
-                        )
-
+                        val readerDataBundle = ReaderDataBundle(libraryItem.id)
                         val navEvent = NavigateToReader(readerDataBundle)
                         myLibraryViewModel.sendNavigationEvent(navEvent)
                     },
-                    comicsItem = LocalMangaItem(
+                    comicsItem = ComicsItem(
                         id = "id",
                         title = libraryItem.title,
-                        totalChapters = 720,
-                        currentChapter = 128,
-                        localStatus = Status.Reading,
-                        source = Source.Local(libraryItem.file.coverPath),
+                        pageCount = libraryItem.pageCount,
+                        currentPage = libraryItem.currentPage,
                         file = libraryItem.file
                     )
                 )

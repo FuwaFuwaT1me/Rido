@@ -10,5 +10,7 @@ import com.example.core_data.converter.FileDataDtoConverter
 data class PdfFileDto(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val title: String,
-    val file: FileDataDto
+    val file: FileDataDto,
+    val pageCount: Int,
+    val currentPage: Int
 )

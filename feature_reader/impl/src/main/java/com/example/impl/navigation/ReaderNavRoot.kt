@@ -28,16 +28,16 @@ fun NavGraphBuilder.ReaderNavRoot(
 
         val readerScreenDataBundle = navBackStackEntry.arguments
             ?.getParcelable<ReaderDataBundle>(ReaderDataBundle.NAME)
-        val filePath = readerScreenDataBundle?.filePath
+        val libraryItemId = readerScreenDataBundle?.libraryItemId
 
-        if (filePath == null) {
+        if (libraryItemId == null) {
             // TODO: display an error
         } else {
             BaseScreen(
                 navController = navController,
                 viewModel = viewModel
             ) {
-                ReaderScreen(viewModel, filePath)
+                ReaderScreen(viewModel, libraryItemId)
             }
         }
     }

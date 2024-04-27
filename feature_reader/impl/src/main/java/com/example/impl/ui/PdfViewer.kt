@@ -61,6 +61,7 @@ fun PdfViewer(
         currentState: PdfViewerState,
         lastState: PdfViewerState
     ) -> Unit = { _, _ -> },
+    onDispose: (lastState: PdfViewerState) -> Unit = {}
 ) {
     var lastState by remember {
         mutableStateOf(PdfViewerState(false, null, null))
@@ -120,6 +121,12 @@ fun PdfViewer(
                 count = pageCount,
                 key = { index -> "$file-$index" }
             ) { index ->
+                DisposableEffect(Unit) {
+                    onDispose {
+                        onDispose(PdfViewerState(false, index, pageCount))
+                    }
+                }
+
                 val cacheKey = MemoryCache.Key("$file-$index")
                 val cacheValue = imageLoader.memoryCache?.get(cacheKey)?.bitmap
 

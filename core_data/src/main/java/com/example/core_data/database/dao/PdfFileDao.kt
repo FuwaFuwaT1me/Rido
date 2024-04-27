@@ -12,9 +12,15 @@ interface PdfFileDao {
     @Query("SELECT * FROM PdfFileDto")
     fun getPdfFiles(): Flow<List<PdfFileDto>>
 
-    @Insert
-    fun insertPdfFile(pdfFiles: PdfFileDto)
+    @Query("SELECT * FROM PdfFileDto WHERE id = :id LIMIT 1")
+    suspend fun getPdfFile(id: String): PdfFileDto
 
     @Insert
-    fun insertPdfFiles(pdfFiles: List<PdfFileDto>)
+    suspend fun insertPdfFile(pdfFile: PdfFileDto)
+
+    @Insert
+    suspend fun insertPdfFiles(pdfFiles: List<PdfFileDto>)
+
+    @Query("UPDATE PdfFileDto SET currentPage = :pageNumber WHERE id = :id")
+    fun updateLastReadPage(id: String, pageNumber: Int)
 }

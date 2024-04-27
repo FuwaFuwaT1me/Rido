@@ -62,27 +62,31 @@ class MyLibraryModel @Inject constructor(
             }
         }
 
-        pdfFileDao.insertPdfFiles(files.map { it.toDto() })
+        pdfFileDao.insertPdfFiles(files.mapNotNull { it?.toDto() })
 
         onViewAction(CloseFilePickerAction)
     }
 
-    private suspend fun savePdfFile(uri: Uri, dir: File): PdfFile {
+    private suspend fun savePdfFile(uri: Uri, dir: File): PdfFile? {
         val file = uri.getFile(applicationContext)
         val newFile = File("${dir.absolutePath}/${file?.name}")
         val coverFile = File("${dir.absoluteFile}/cover_${file?.name}.png")
 
         file?.copyTo(newFile)
 
-        newFile.savePdfFirstFrameToFile(coverFile)
+        val pageCount = newFile.savePdfFirstFrameToFile(coverFile) ?: return null
 
-        return PdfFile(
-            id = (0..999999).random().toString(),
-            title = file?.name ?: "",
-            file = FileData(
-                path = newFile.absolutePath,
-                coverPath = coverFile.absolutePath
+        return runCatching {
+            PdfFile(
+                id = (0..999999).random().toString(),
+                title = file?.name ?: "",
+                file = FileData(
+                    path = newFile.absolutePath,
+                    coverPath = coverFile.absolutePath
+                ),
+                pageCount = pageCount,
+                currentPage = 0
             )
-        )
+        }.getOrNull()
     }
 }

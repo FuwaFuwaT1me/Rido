@@ -14,14 +14,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.core_domain.model.comics.LocalComicsItem
+import com.example.core_domain.model.comics.ComicsItem
 
 @Composable
 fun ComicsLibraryItem(
-    comicsItem: LocalComicsItem,
+    comicsItem: ComicsItem,
     modifier: Modifier = Modifier
 ) {
-    val percent = ((comicsItem.currentChapter * 1.0 / comicsItem.totalChapters) * 100).toInt()
+    val percent = ((comicsItem.currentPage * 1.0 / comicsItem.pageCount) * 100).toInt()
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -42,7 +42,7 @@ fun ComicsLibraryItem(
             )
             Row {
                 Text(
-                    text = "Chapters ${comicsItem.currentChapter} / ${comicsItem.totalChapters} ($percent%)"
+                    text = "Chapters ${comicsItem.currentPage} / ${comicsItem.pageCount} ($percent%)"
                 )
             }
             Text(

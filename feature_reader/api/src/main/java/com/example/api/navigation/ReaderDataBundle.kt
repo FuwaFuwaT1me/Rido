@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ReaderDataBundle(
-    val filePath: String
+    val libraryItemId: String?
 ): Parcelable, DataBundle {
 
     companion object {

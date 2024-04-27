@@ -29,6 +29,6 @@ fun FilePicker(
     }.toTypedArray()
 
     LaunchedEffect(Unit) {
-            launcher.launch(mimeTypes)
+        launcher.launch(mimeTypes)
     }
 }

@@ -7,14 +7,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-suspend fun File.savePdfFirstFrameToFile(outputFile: File) {
-    withContext(Dispatchers.IO) {
+suspend fun File.savePdfFirstFrameToFile(outputFile: File): Int? {
+    return withContext(Dispatchers.IO) {
         try {
             val fileDescriptor = ParcelFileDescriptor.open(
                 this@savePdfFirstFrameToFile,
                 ParcelFileDescriptor.MODE_READ_ONLY
             )
             val pdfRenderer = PdfRenderer(fileDescriptor)
+            val pageCount = pdfRenderer.pageCount
             val page = pdfRenderer.openPage(0)
             val bitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)
             page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
@@ -23,8 +24,11 @@ suspend fun File.savePdfFirstFrameToFile(outputFile: File) {
             fileDescriptor.close()
 
             bitmap.saveAsPngToFile(outputFile)
+
+            pageCount
         } catch (e: Exception) {
             e.printStackTrace()
+            null
         }
     }
 }

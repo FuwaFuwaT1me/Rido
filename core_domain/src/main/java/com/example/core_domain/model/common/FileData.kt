@@ -1,9 +1,10 @@
 package com.example.core_domain.model.common
 
-import kotlinx.serialization.Serializable
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-@Serializable
+@Parcelize
 data class FileData(
     val path: String,
     val coverPath: String
-)
+) : Parcelable
