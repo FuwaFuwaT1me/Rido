@@ -28,6 +28,7 @@ fun ReaderScreen(
         Box(modifier = Modifier.fillMaxSize()) {
             PdfViewer(
                 file = file,
+                startPage = libItem.currentPage,
                 onDispose = { lastState ->
                     lastState.currentPage?.let { currentPage ->
                         readerViewModel.updateLastReadPage(libItem.id, currentPage)
