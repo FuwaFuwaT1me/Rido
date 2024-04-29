@@ -6,12 +6,15 @@ import android.os.ParcelFileDescriptor
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +48,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.File
+import kotlin.math.sqrt
 
 data class PdfViewerState(
     val isLoading: Boolean,
@@ -58,7 +62,8 @@ fun PdfViewer(
     file: File,
     startPage: Int = 0,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color(0xFF909090),
+//    backgroundColor: Color = Color(0xFF909090),
+    backgroundColor: Color = Color.Black,
     pageColor: Color = Color.White,
     orientation: Orientation = Orientation.HORIZONTAL,
     arrangement: Arrangement.HorizontalOrVertical = Arrangement.Center,
@@ -72,11 +77,19 @@ fun PdfViewer(
         mutableStateOf(PdfViewerState(false, null, null))
     }
 
+    var first by remember {
+        mutableStateOf(false)
+    }
+
     fun updateState(newState: PdfViewerState) {
         if (newState != lastState) {
             loadingListener(newState, lastState)
             lastState = newState
         }
+    }
+
+    LaunchedEffect(Unit) {
+        updateState(lastState.copy(isLoading = true))
     }
 
     val context = LocalContext.current
@@ -100,14 +113,13 @@ fun PdfViewer(
     val imageLoadingScope = rememberCoroutineScope()
 
     BoxWithConstraints(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+//            .background(Color.Black)
     ) {
-        LaunchedEffect(Unit) {
-            updateState(PdfViewerState(true, null, null))
-        }
-
         val width = with(LocalDensity.current) { maxWidth.toPx() }.toInt()
+        val widthDp = with(LocalDensity.current) { maxWidth }
         val height = with(LocalDensity.current) { maxHeight.toPx() * 0.75 }.toInt()
+        val heightDp = with(LocalDensity.current) { maxHeight.times(0.75f) }
         val pageCount by remember(renderer) { derivedStateOf { renderer?.pageCount ?: 0 } }
 
         val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -142,11 +154,11 @@ fun PdfViewer(
             pagerState = pagerState,
             orientation = orientation,
             flingBehavior = flingBehavior,
-            beyondBoundPageCount = 1,
+            beyondBoundPageCount = 0,
             modifier = modifier
-                .background(backgroundColor)
-                .fillMaxSize()
+                .size(widthDp, heightDp)
                 .align(Alignment.Center)
+                .background(Color.White)
         ) { index ->
             val cacheKey = MemoryCache.Key("$file-$index")
             val cacheValue = imageLoader.memoryCache?.get(cacheKey)?.bitmap
@@ -183,9 +195,10 @@ fun PdfViewer(
                         job.cancel()
                     }
                 }
+//                PagePlaceHolder(backgroundColor = Color.White)
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else {
                 val request = ImageRequest.Builder(context)
-                    .size(width, height)
                     .memoryCacheKey(cacheKey)
                     .data(bitmap)
                     .build()
@@ -194,10 +207,21 @@ fun PdfViewer(
                     contentScale = ContentScale.Fit,
                     painter = rememberAsyncImagePainter(request),
                     modifier = Modifier
-                        .background(Color.White)
+//                        .aspectRatio(1f / sqrt(2f))
                         .fillMaxWidth()
+//                        .background(Color.White)
                 )
             }
         }
     }
+}
+
+@Composable
+internal fun PagePlaceHolder(backgroundColor : Color) {
+    Box(
+        modifier = Modifier
+            .background(backgroundColor)
+            .aspectRatio(1f / sqrt(2f))
+            .fillMaxWidth()
+    )
 }

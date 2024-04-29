@@ -13,6 +13,14 @@ class ReaderModel @Inject constructor(
 ) {
 
     override fun onViewAction(action: ReaderAction) {
+        when (action) {
+            ReaderLoaded -> {
+                updateState { copy(isLoading = false) }
+            }
 
+            ReaderStartLoading -> {
+                updateState { copy(isLoading = true) }
+            }
+        }
     }
 }

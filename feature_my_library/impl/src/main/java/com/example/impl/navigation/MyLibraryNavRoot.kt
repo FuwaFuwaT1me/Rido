@@ -1,5 +1,6 @@
 package com.example.impl.navigation
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -15,6 +16,10 @@ fun NavGraphBuilder.MyLibraryNavRoot(
 ) {
     composable(MyLibraryNavScreen.name) {
         val viewModel = hiltViewModel<MyLibraryViewModel>()
+
+        LaunchedEffect(Unit) {
+            viewModel.init()
+        }
 
         BaseScreen(
             navController = navController,

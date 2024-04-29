@@ -17,7 +17,7 @@ interface ReaderModule {
         @Provides
         fun provideDefaultState(): ReaderState {
             return ReaderState(
-                isLoading = false
+                isLoading = true
             )
         }
     }

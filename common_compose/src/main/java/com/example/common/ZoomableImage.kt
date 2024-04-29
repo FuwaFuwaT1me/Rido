@@ -10,7 +10,7 @@ import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -41,9 +41,9 @@ fun ZoomableImage(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val scale = remember { mutableStateOf(1f) }
-    val offsetX = remember { mutableStateOf(1f) }
-    val offsetY = remember { mutableStateOf(1f) }
+    val scale = remember { mutableFloatStateOf(1f) }
+    val offsetX = remember { mutableFloatStateOf(1f) }
+    val offsetY = remember { mutableFloatStateOf(1f) }
 
     Box(
         modifier = Modifier
@@ -55,25 +55,25 @@ fun ZoomableImage(
                         awaitFirstDown()
                         do {
                             val event = awaitPointerEvent()
-                            scale.value *= event.calculateZoom()
-                            if (scale.value > 1) {
+                            scale.floatValue *= event.calculateZoom()
+                            if (scale.floatValue > 1) {
                                 scrollState?.run {
                                     coroutineScope.launch {
                                         setScrolling(false)
                                     }
                                 }
                                 val offset = event.calculatePan()
-                                offsetX.value += offset.x
-                                offsetY.value += offset.y
+                                offsetX.floatValue += offset.x
+                                offsetY.floatValue += offset.y
                                 scrollState?.run {
                                     coroutineScope.launch {
                                         setScrolling(true)
                                     }
                                 }
                             } else {
-                                scale.value = 1f
-                                offsetX.value = 1f
-                                offsetY.value = 1f
+                                scale.floatValue = 1f
+                                offsetX.floatValue = 1f
+                                offsetY.floatValue = 1f
                             }
                         } while (event.changes.any { it.pressed })
                     }
@@ -89,11 +89,11 @@ fun ZoomableImage(
                 .align(imageAlign)
                 .graphicsLayer {
                     if (isZoomable) {
-                        scaleX = maxOf(maxScale, minOf(minScale, scale.value))
-                        scaleY = maxOf(maxScale, minOf(minScale, scale.value))
+                        scaleX = maxOf(maxScale, minOf(minScale, scale.floatValue))
+                        scaleY = maxOf(maxScale, minOf(minScale, scale.floatValue))
 
-                        translationX = offsetX.value
-                        translationY = offsetY.value
+                        translationX = offsetX.floatValue
+                        translationY = offsetY.floatValue
                     }
                 }
         )
