@@ -3,6 +3,7 @@ package com.example.impl.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -33,6 +34,7 @@ fun ReaderScreen(
         Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
             PdfViewer(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .align(Alignment.Center),
                 file = file,
                 startPage = libItem.currentPage,
@@ -41,7 +43,7 @@ fun ReaderScreen(
                         readerViewModel.updateLastReadPage(libItem.id, currentPage)
                     }
                 },
-                loadingListener = { newState, lastState ->
+                loadingListener = { newState ->
                     if (newState.isLoading) {
                         readerViewModel.sendAction(ReaderStartLoading)
                     } else {
