@@ -9,6 +9,7 @@ import com.example.core.mvi.api.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -26,6 +27,7 @@ abstract class BaseViewModel<ViewAction, ViewState, NavEvent> : ViewModel()
     private val viewActions: Flow<ViewAction> = actions.viewActions
 
     fun init() {
+        scope.coroutineContext.cancelChildren()
         bindFlows()
     }
 
