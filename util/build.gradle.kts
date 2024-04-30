@@ -40,6 +40,8 @@ android {
     }
 }
 dependencies {
+    implementation(project(":core_domain"))
+
     implementation("androidx.compose.runtime:runtime:1.6.1")
     implementation("androidx.core:core-ktx:1.12.0")
 }

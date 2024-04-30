@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.api.navigation.NavigateToReader
 import com.example.api.navigation.ReaderDataBundle
 import com.example.core_domain.model.comics.ComicsItem
+import com.example.core_domain.model.justfile.JustFile
 import com.example.impl.file.FilePicker
 import com.example.impl.mvi.MyLibraryViewModel
 import com.example.impl.mvi.OpenFilePickerAction
@@ -39,20 +40,28 @@ fun MyLibraryScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = modifier) {
             items(state.libraryItems) { libraryItem ->
-                ComicsLibraryItem(
-                    modifier = Modifier.clickable {
-                        val readerDataBundle = ReaderDataBundle(libraryItem.id)
-                        val navEvent = NavigateToReader(readerDataBundle)
-                        myLibraryViewModel.sendNavigationEvent(navEvent)
-                    },
-                    comicsItem = ComicsItem(
-                        id = "id",
-                        title = libraryItem.title,
-                        pageCount = libraryItem.pageCount,
-                        currentPage = libraryItem.currentPage,
-                        file = libraryItem.file
-                    )
-                )
+                when (libraryItem) {
+                    is ComicsItem -> {
+                        ComicsLibraryItem(
+                            modifier = Modifier.clickable {
+                                val readerDataBundle = ReaderDataBundle(libraryItem.id)
+                                val navEvent = NavigateToReader(readerDataBundle)
+                                myLibraryViewModel.sendNavigationEvent(navEvent)
+                            },
+                            comicsItem = libraryItem
+                        )
+                    }
+                    is JustFile -> {
+                        FileLibraryItem(
+                            modifier = Modifier.clickable {
+                                val readerDataBundle = ReaderDataBundle(libraryItem.id)
+                                val navEvent = NavigateToReader(readerDataBundle)
+                                myLibraryViewModel.sendNavigationEvent(navEvent)
+                            },
+                            file = libraryItem
+                        )
+                    }
+                }
             }
         }
         FloatingActionButton(

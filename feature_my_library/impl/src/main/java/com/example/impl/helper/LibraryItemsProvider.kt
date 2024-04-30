@@ -21,7 +21,7 @@ class LibraryItemsProvider @Inject constructor(
             val combinedList = mutableListOf<LibraryItem>()
 
             combinedList.addAll(pdfFiles.map { it.toDomain() })
-//            combinedList.addAll(imageFiles.map { it.toDomain() })
+            combinedList.addAll(imageFiles.map { it.toDomain() })
 
             combinedList.sort()
         }

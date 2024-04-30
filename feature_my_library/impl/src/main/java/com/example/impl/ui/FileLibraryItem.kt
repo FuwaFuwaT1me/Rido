@@ -12,26 +12,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.core_domain.model.comics.ComicsItem
+import com.example.core_domain.model.justfile.JustFile
+import com.example.core_domain.model.justfile.PagedFile
 import com.example.util.getStringType
 
 @Composable
-fun ComicsLibraryItem(
-    comicsItem: ComicsItem,
+fun FileLibraryItem(
+    file: JustFile,
     modifier: Modifier = Modifier
 ) {
-    val percent = ((comicsItem.currentPage * 1.0 / comicsItem.pageCount) * 100).toInt()
-
     Row(
         modifier = modifier.fillMaxWidth(),
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(comicsItem.file.coverPath)
+                .data(file.file.coverPath)
                 .build(),
             contentDescription = "Bitmap image",
             contentScale = ContentScale.Crop,
@@ -42,37 +40,20 @@ fun ComicsLibraryItem(
         )
         Column {
             Text(
-                text = comicsItem.title
+                text = file.title
             )
             Row {
-                Text(
-                    text = "Chapters ${comicsItem.currentPage} / ${comicsItem.pageCount} ($percent%)"
-                )
-                Text(text = comicsItem.getStringType())
+                (file as? PagedFile)?.let {
+                    val percent = ((file.currentPage * 1.0 / file.pageCount) * 100).toInt()
+                    Text(
+                        text = "Chapters ${file.currentPage} / ${file.pageCount} ($percent%)"
+                    )
+                }
+                Text(text = file.getStringType())
             }
             Text(
                 text = "Last status update"
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun MangaLibraryItemPreview() {
-//    val testImage = BitmapFactory.decodeResource(
-//        LocalContext.current.resources,
-//        R.drawable.test_image
-//    )
-// TODO: pass test image file path
-//    ComicsLibraryItem(
-//        comicsItem = LocalMangaItem(
-//            id = "id",
-//            title = "Naruto",
-//            totalChapters = 720,
-//            currentChapter = 128,
-//            localStatus = Status.Reading,
-//            source = Source.Local(LocalContext.current.getDrawable(R.drawable.test_image).)
-//        )
-//    )
 }

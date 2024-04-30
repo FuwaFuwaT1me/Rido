@@ -10,7 +10,7 @@ import com.example.core_data.dto.PdfFileDto
 @Database(entities = [
     PdfFileDto::class,
     ImageFileDto::class,
-], version = 1)
+], version = 2)
 abstract class RidoDatabase: RoomDatabase() {
 
     abstract fun getPdfFileDao(): PdfFileDao

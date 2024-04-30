@@ -10,7 +10,11 @@ import androidx.compose.runtime.LaunchedEffect
 private val SUPPORTED_FILE_TYPES = listOf(
     "pdf",
     "zip",
-    "rar"
+    "rar",
+    "jpeg",
+    "jpg",
+    "png",
+    "gif"
 )
 
 @Composable

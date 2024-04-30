@@ -13,8 +13,11 @@ interface ImageFileDao {
     fun getImageFiles(): Flow<List<ImageFileDto>>
 
     @Insert
-    fun insertImageFile(pdfFiles: ImageFileDto)
+    suspend fun insertImageFile(imageFile: ImageFileDto)
 
     @Insert
-    fun insertImageFiles(pdfFiles: List<ImageFileDto>)
+    suspend fun insertImageFiles(imageFiles: List<ImageFileDto>)
+
+    @Query("SELECT * FROM ImageFileDto WHERE id = :id LIMIT 1")
+    suspend fun getImageFile(id: String): ImageFileDto
 }

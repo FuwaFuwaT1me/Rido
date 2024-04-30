@@ -32,3 +32,7 @@ suspend fun File.savePdfFirstFrameToFile(outputFile: File): Int? {
         }
     }
 }
+
+fun File.ext(): String {
+    return name.substringAfterLast(".")
+}

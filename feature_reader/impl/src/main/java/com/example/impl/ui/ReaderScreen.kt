@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.core_domain.model.common.LibraryItem
+import com.example.core_domain.model.justfile.pdf.PdfFile
 import com.example.impl.mvi.ReaderLoaded
 import com.example.impl.mvi.ReaderStartLoading
 import com.example.impl.mvi.ReaderViewModel
@@ -26,7 +27,7 @@ fun ReaderScreen(
         value = readerViewModel.getLibraryItem(libraryItemId)
     }
 
-    libraryItem?.let { libItem ->
+    (libraryItem as? PdfFile)?.let { libItem ->
         val file = remember(libraryItem) {
             File(libItem.file.path)
         }

@@ -20,6 +20,7 @@ class ReaderViewModel @Inject constructor(
 
     suspend fun getLibraryItem(id: String): LibraryItem {
         return withContext(Dispatchers.IO) {
+            // TODO : process if file is not found
             pdfFileDao.getPdfFile(id).toDomain()
         }
     }
