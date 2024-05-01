@@ -1,4 +1,4 @@
-package com.example.impl.ui
+package com.example.impl.ui.pdf
 
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer

@@ -23,7 +23,10 @@ import androidx.compose.ui.unit.dp
 import com.example.api.navigation.NavigateToReader
 import com.example.api.navigation.ReaderDataBundle
 import com.example.core_domain.model.comics.ComicsItem
+import com.example.core_domain.model.common.LibraryType
 import com.example.core_domain.model.justfile.JustFile
+import com.example.core_domain.model.justfile.image.ImageFile
+import com.example.core_domain.model.justfile.pdf.PdfFile
 import com.example.impl.file.FilePicker
 import com.example.impl.mvi.MyLibraryViewModel
 import com.example.impl.mvi.OpenFilePickerAction
@@ -44,17 +47,31 @@ fun MyLibraryScreen(
                     is ComicsItem -> {
                         ComicsLibraryItem(
                             modifier = Modifier.clickable {
-                                val readerDataBundle = ReaderDataBundle(libraryItem.id)
+                                val readerDataBundle = ReaderDataBundle(
+                                    libraryItem.id,
+                                    LibraryType.COMICS.toString()
+                                )
                                 val navEvent = NavigateToReader(readerDataBundle)
                                 myLibraryViewModel.sendNavigationEvent(navEvent)
                             },
                             comicsItem = libraryItem
                         )
                     }
+
                     is JustFile -> {
+                        val libraryType = when (libraryItem) {
+                            is PdfFile -> LibraryType.PDF
+                            is ImageFile -> LibraryType.IMAGE
+
+                            else -> LibraryType.UNDEFINED
+                        }
+
                         FileLibraryItem(
                             modifier = Modifier.clickable {
-                                val readerDataBundle = ReaderDataBundle(libraryItem.id)
+                                val readerDataBundle = ReaderDataBundle(
+                                    libraryItem.id,
+                                    libraryType.toString()
+                                )
                                 val navEvent = NavigateToReader(readerDataBundle)
                                 myLibraryViewModel.sendNavigationEvent(navEvent)
                             },

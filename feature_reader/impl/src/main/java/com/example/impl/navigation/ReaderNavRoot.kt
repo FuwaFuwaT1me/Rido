@@ -10,8 +10,9 @@ import com.example.api.navigation.ReaderDataBundle
 import com.example.api.navigation.ReaderDataBundleNavType
 import com.example.api.navigation.ReaderNavScreen
 import com.example.common.BaseScreen
+import com.example.core_domain.model.common.LibraryType
 import com.example.impl.mvi.ReaderViewModel
-import com.example.impl.ui.ReaderScreen
+import com.example.impl.ui.pdf.ReaderScreen
 
 @Suppress("FunctionName")
 fun NavGraphBuilder.ReaderNavRoot(
@@ -34,15 +35,18 @@ fun NavGraphBuilder.ReaderNavRoot(
         val readerScreenDataBundle = navBackStackEntry.arguments
             ?.getParcelable<ReaderDataBundle>(ReaderDataBundle.NAME)
         val libraryItemId = readerScreenDataBundle?.libraryItemId
+        val libraryType = readerScreenDataBundle?.libraryType
 
-        if (libraryItemId == null) {
+        if (libraryItemId == null || libraryType == null) {
             // TODO: display an error
         } else {
+            val type = LibraryType.valueOf(libraryType)
+
             BaseScreen(
                 navController = navController,
                 viewModel = viewModel
             ) {
-                ReaderScreen(viewModel, libraryItemId)
+                ReaderScreen(viewModel, libraryItemId, type)
             }
         }
     }
