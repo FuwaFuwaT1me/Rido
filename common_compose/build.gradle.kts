@@ -44,6 +44,8 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.10.1")
 
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.1")
 
     implementation("androidx.core:core-ktx:1.12.0")
