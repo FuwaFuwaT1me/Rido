@@ -1,5 +1,6 @@
 package com.example.common
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.background
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -25,6 +25,8 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImagePainter
 import kotlinx.coroutines.awaitCancellation
@@ -46,7 +48,7 @@ fun ZoomableImage(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    var scale by remember { mutableStateOf(1f) }
+    var scale by remember { mutableFloatStateOf(1f) }
     val offsetX = remember { mutableFloatStateOf(1f) }
     val offsetY = remember { mutableFloatStateOf(1f) }
 
@@ -65,37 +67,67 @@ fun ZoomableImage(
                         do {
                             val event = awaitPointerEvent()
                             val calculatedZoom = event.calculateZoom()
-                            if (scale * calculatedZoom in 1f..3f) {
-                                scale *= event.calculateZoom()
+
+                            val prevScale = scale
+
+                            scale = if (scale * calculatedZoom in 1f..3f) {
+                                scale * calculatedZoom
+                            } else {
+                                scale
                             }
+
+                            var imageHeight = 1
+                            var imageWidth = 1
+                            var imageInitialScale = 1f
+
+                            (painter.state as? AsyncImagePainter.State.Success)?.painter?.let {
+                                imageHeight = it.intrinsicSize.height.toInt()
+                                imageWidth = it.intrinsicSize.width.toInt()
+                                imageInitialScale = widthPix * 1f / imageWidth
+                            }
+
+                            val shouldScrollY = (heightPix - scale * imageInitialScale * imageHeight) < 0
+                            val shouldScrollX = (widthPix - scale * imageWidth * imageWidth) < 0
+
+                            val offset = event.calculatePan()
+                            val x = offsetX.floatValue + offset.x
+                            val y = offsetY.floatValue + offset.y
+                            val calculatedX = abs(x)
+                            val calculatedY = abs(y)
+
+                            val koefX = (scale - 1) / 2f
+                            val yMinFilledScale = heightPix / (imageHeight * imageInitialScale)
+                            val koefY = (scale - yMinFilledScale) / 2f
+                            val maxX = widthPix * koefX
+                            val maxY = imageHeight * imageInitialScale * koefY
+
+                            if (scale != prevScale) {
+                                if (!shouldScrollX) {
+                                    offsetX.floatValue = 0f
+                                } else if (calculatedX >= maxX) {
+                                    if (x < 0) {
+                                        offsetX.floatValue = -maxX
+                                    } else {
+                                        offsetX.floatValue = maxX
+                                    }
+                                }
+                                if (!shouldScrollY) {
+                                    offsetY.floatValue = 0f
+                                } else if (calculatedY >= maxY) {
+                                    if (y < 0) {
+                                        offsetY.floatValue = -maxY
+                                    } else {
+                                        offsetY.floatValue = maxY
+                                    }
+                                }
+                            }
+
                             if (scale in 1f..3f) {
                                 scrollState?.run {
                                     coroutineScope.launch {
                                         setScrolling(false)
                                     }
                                 }
-                                val offset = event.calculatePan()
-                                val calculatedX = abs(offsetX.floatValue + offset.x)
-                                val calculatedY = abs(offsetY.floatValue + offset.y)
-
-                                var imageHeight = 1
-                                var imageWidth = 1
-                                var imageInitialScale = 1.0
-
-                                (painter.state as? AsyncImagePainter.State.Success)?.painter?.let {
-                                    imageHeight = it.intrinsicSize.height.toInt()
-                                    imageWidth = it.intrinsicSize.width.toInt()
-                                    imageInitialScale = widthPix * 1.0 / imageWidth
-                                }
-
-                                val shouldScrollY = (heightPix - scale * imageInitialScale * imageHeight) < 0
-                                val shouldScrollX = (widthPix - scale * imageWidth * imageWidth) < 0
-
-                                val koefX = (scale - 1) / 2
-                                val yMinFilledScale = heightPix / (imageHeight * imageInitialScale)
-                                val koefY = (scale - yMinFilledScale) / 2
-                                val maxX = widthPix * koefX
-                                val maxY = imageHeight * imageInitialScale * koefY
 
                                 if (calculatedX <= maxX && shouldScrollX) {
                                     offsetX.floatValue += offset.x
@@ -109,6 +141,9 @@ fun ZoomableImage(
                                         setScrolling(true)
                                     }
                                 }
+
+//                                Log.d("ANIME", "offssetX = ${offsetX.floatValue}, offsetY = ${offsetY.floatValue}")
+                                Log.d("ANIME", "x = ${x}, y = ${y}")
                             }
                         } while (event.changes.any { it.pressed })
                     }
@@ -130,6 +165,9 @@ fun ZoomableImage(
                         translationX = offsetX.floatValue
                         translationY = offsetY.floatValue
                     }
+                    Log.d("BRUH", "${this.transformOrigin.pivotFractionX}")
+                }.onGloballyPositioned {
+                    it.boundsInParent()
                 }
         )
     }
