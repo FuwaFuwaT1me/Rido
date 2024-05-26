@@ -80,7 +80,7 @@ private fun ZoomableImageImpl(
     imageAlign: Alignment = Alignment.Center,
     shape: Shape = RectangleShape,
     maxScale: Float = 1f,
-    minScale: Float = 3f,
+    defaultMinScale: Float = 3f,
     contentScale: ContentScale = ContentScale.Fit,
     scrollState: ScrollableState? = null
 ) {
@@ -111,6 +111,18 @@ private fun ZoomableImageImpl(
         screenHeightPx * 1f / imageHeight
     }
 
+    val canImageHeightScrollToTop = screenHeightPx / (imageHeight * imageInitialScale) <= 3
+    val canImageWidthcrollToTop = screenWidthPx / (imageWidth * imageInitialScale) <= 3
+    val minScale = if (!canImageHeightScrollToTop || !canImageWidthcrollToTop) {
+        if (imageAspectRatio < 1) {
+            screenWidthPx / (imageWidth * imageInitialScale)
+        } else {
+            screenHeightPx / (imageHeight * imageInitialScale)
+        }
+    } else {
+        defaultMinScale
+    }
+
     Box(
         modifier = Modifier
             .clip(shape)
@@ -123,10 +135,13 @@ private fun ZoomableImageImpl(
                         val calculatedZoom = event.calculateZoom()
                         val offset = event.calculatePan()
 
-                        val (updatedScale, wasScaleChanged) = if (scale * calculatedZoom in 1f..3f) {
-                            scale * calculatedZoom to true
-                        } else {
-                            scale to false
+                        val newScale = scale * calculatedZoom
+
+                        val (updatedScale, wasScaleChanged) = when {
+                            newScale in (1f..minScale) -> scale * calculatedZoom to true
+                            newScale < 1f -> 1f to true
+                            newScale > minScale -> minScale to true
+                            else -> scale to false
                         }
                         scale = updatedScale
 
@@ -189,7 +204,7 @@ private fun ZoomableImageImpl(
                         }
 
                         // define max borders when scrolling
-                        if (updatedScale in 1f..3f) {
+                        if (updatedScale in 1f..minScale) {
                             scrollState?.run {
                                 coroutineScope.launch {
                                     setScrolling(false)
@@ -221,8 +236,9 @@ private fun ZoomableImageImpl(
             modifier = modifier
                 .align(imageAlign)
                 .graphicsLayer {
-                    scaleX = maxOf(maxScale, minOf(minScale, scale))
-                    scaleY = maxOf(maxScale, minOf(minScale, scale))
+                    val updatedScale = scale.coerceIn(maxScale, minScale)
+                    scaleX = updatedScale
+                    scaleY = updatedScale
 
                     translationX = offsetX.floatValue
                     translationY = offsetY.floatValue
