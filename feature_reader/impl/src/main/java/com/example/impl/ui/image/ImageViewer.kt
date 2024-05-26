@@ -17,6 +17,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.imageLoader
 import coil.memory.MemoryCache
 import coil.request.ImageRequest
+import coil.size.Size
 import com.example.common.ZoomableImage
 import java.io.File
 
@@ -52,6 +53,7 @@ fun ImageViewer(
             val request = ImageRequest.Builder(context)
                 .memoryCacheKey(cacheKey)
                 .data(bitmap)
+                .size(Size.ORIGINAL)
                 .build()
 
             ZoomableImage(

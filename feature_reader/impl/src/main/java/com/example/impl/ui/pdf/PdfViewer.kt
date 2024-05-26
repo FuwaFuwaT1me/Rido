@@ -36,6 +36,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.imageLoader
 import coil.memory.MemoryCache
 import coil.request.ImageRequest
+import coil.size.Size
 import com.example.common.HorizontalOrVerticalPager
 import com.example.common.Orientation
 import com.example.common.ZoomableImage
@@ -187,6 +188,7 @@ fun PdfViewer(
                 val request = ImageRequest.Builder(context)
                     .memoryCacheKey(cacheKey)
                     .data(bitmap)
+                    .size(Size.ORIGINAL)
                     .build()
 
                 ZoomableImage(
