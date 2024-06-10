@@ -15,6 +15,7 @@ fun HorizontalOrVerticalPager(
     orientation: Orientation,
     beyondBoundPageCount: Int,
     flingBehavior: SnapFlingBehavior,
+    userScrollEnabled: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable (Int) -> Unit
 ) {
@@ -23,7 +24,8 @@ fun HorizontalOrVerticalPager(
             modifier = modifier,
             state = pagerState,
             beyondBoundsPageCount = beyondBoundPageCount,
-            flingBehavior = flingBehavior
+            flingBehavior = flingBehavior,
+            userScrollEnabled = userScrollEnabled,
         ) { page ->
             content(page)
         }
@@ -32,7 +34,8 @@ fun HorizontalOrVerticalPager(
             modifier = modifier,
             state = pagerState,
             beyondBoundsPageCount = beyondBoundPageCount,
-            flingBehavior = flingBehavior
+            flingBehavior = flingBehavior,
+            userScrollEnabled = userScrollEnabled,
         ) { page ->
             content(page)
         }

@@ -1,25 +1,25 @@
 package com.example.core.mvi.impl
 
 import com.example.core.mvi.api.Action
-import com.example.core.mvi.api.Actions
+import com.example.core.mvi.api.ActionFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-class BaseActions<ViewAction : Action>(
+class BaseActionFlow<UiAction : Action>(
     private val scope: CoroutineScope
-) : Actions<ViewAction> {
+) : ActionFlow<UiAction> {
 
-    private val _viewActions = MutableSharedFlow<ViewAction>()
+    private val _uiActions = MutableSharedFlow<UiAction>()
 
-    override val viewActions: Flow<ViewAction>
-        get() = _viewActions
+    override val actions: Flow<UiAction>
+        get() = _uiActions
 
-    override fun sendViewAction(action: ViewAction) {
+    override fun sendAction(action: UiAction) {
         scope.launch(Dispatchers.Default) {
-            _viewActions.emit(action)
+            _uiActions.emit(action)
         }
     }
 }

@@ -3,16 +3,16 @@ package com.example.core.mvi.api
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-interface Model<ViewState, ViewAction, NavEvent>
-    where ViewState : State,
-          ViewAction : Action,
-          NavEvent : MviNavigationEvent {
+interface Model<UiState, UiAction, NavEvent>
+    where UiState : State,
+          UiAction : Action,
+          NavEvent : NavigationEvent {
 
 
-    val viewState: StateFlow<ViewState>
+    val state: StateFlow<UiState>
     val navigationEvent: Flow<NavEvent>
 
-    fun onViewAction(action: ViewAction)
+    fun onAction(action: UiAction)
 
     fun sendNavigationEvent(navEvent: NavEvent)
 

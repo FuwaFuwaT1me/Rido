@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,7 +45,7 @@ fun ZoomableImage(
     maxScale: Float = 1f,
     minScale: Float = 3f,
     contentScale: ContentScale = ContentScale.Fit,
-    scrollState: ScrollableState? = null
+    scrollState: ScrollableState = rememberScrollState(),
 ) {
     when(painter.state) {
         is AsyncImagePainter.State.Loading -> {
@@ -63,7 +64,7 @@ fun ZoomableImage(
                 maxScale,
                 minScale,
                 contentScale,
-                scrollState
+                scrollState,
             )
         }
 
@@ -82,13 +83,14 @@ private fun ZoomableImageImpl(
     maxScale: Float = 1f,
     defaultMinScale: Float = 3f,
     contentScale: ContentScale = ContentScale.Fit,
-    scrollState: ScrollableState? = null
+    scrollState: ScrollableState,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
     var scale by remember { mutableFloatStateOf(1f) }
     val offsetX = remember { mutableFloatStateOf(1f) }
     val offsetY = remember { mutableFloatStateOf(1f) }
+    var lastDirection = remember { Direction.UNKNOWN }
 
     val displayMetrics = LocalContext.current.resources.displayMetrics
     val screenWidthPx = displayMetrics.widthPixels
@@ -145,8 +147,10 @@ private fun ZoomableImageImpl(
                         }
                         scale = updatedScale
 
-                        val imageHeightFillScreenKoef = screenHeightPx - updatedScale * imageInitialScale * imageHeight
-                        val imageWidthFillScreenKoef = screenWidthPx - updatedScale * imageInitialScale * imageWidth
+                        val imageHeightFillScreenKoef =
+                            screenHeightPx - updatedScale * imageInitialScale * imageHeight
+                        val imageWidthFillScreenKoef =
+                            screenWidthPx - updatedScale * imageInitialScale * imageWidth
                         val shouldScrollY = imageHeightFillScreenKoef < 0
                         val shouldScrollX = imageWidthFillScreenKoef < 0
 
@@ -205,7 +209,7 @@ private fun ZoomableImageImpl(
 
                         // define max borders when scrolling
                         if (updatedScale in 1f..minScale) {
-                            scrollState?.run {
+                            scrollState.run {
                                 coroutineScope.launch {
                                     setScrolling(false)
                                 }
@@ -213,12 +217,19 @@ private fun ZoomableImageImpl(
 
                             if (absX <= maxX && shouldScrollX) {
                                 offsetX.floatValue += offset.x
+
+                                // Consume ui-event if it's not a image border
+                                if (absX != maxX) {
+                                    event.changes.forEach { change ->
+                                        change.consume()
+                                    }
+                                }
                             }
                             if (absY < maxY && shouldScrollY) {
                                 offsetY.floatValue += offset.y
                             }
 
-                            scrollState?.run {
+                            scrollState.run {
                                 coroutineScope.launch {
                                     setScrolling(true)
                                 }

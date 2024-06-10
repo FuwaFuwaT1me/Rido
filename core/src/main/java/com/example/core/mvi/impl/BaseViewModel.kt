@@ -2,9 +2,9 @@ package com.example.core.mvi.impl
 
 import androidx.lifecycle.ViewModel
 import com.example.core.mvi.api.Action
-import com.example.core.mvi.api.Actions
+import com.example.core.mvi.api.ActionFlow
 import com.example.core.mvi.api.Model
-import com.example.core.mvi.api.MviNavigationEvent
+import com.example.core.mvi.api.NavigationEvent
 import com.example.core.mvi.api.State
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,27 +13,27 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<ViewAction, ViewState, NavEvent> : ViewModel()
-        where ViewAction : Action,
-              ViewState : State,
-              NavEvent : MviNavigationEvent
+abstract class BaseViewModel<UiAction, UiState, NavEvent> : ViewModel()
+        where UiAction : Action,
+              UiState : State,
+              NavEvent : NavigationEvent
 {
 
-    abstract val model: Model<ViewState, ViewAction, NavEvent>
+    abstract val model: Model<UiState, UiAction, NavEvent>
 
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default)
-    private val actions: Actions<ViewAction> = BaseActions(scope)
+    private val actionFlow: ActionFlow<UiAction> = BaseActionFlow(scope)
 
-    private val viewActions: Flow<ViewAction> = actions.viewActions
+    private val uiActions: Flow<UiAction> = actionFlow.actions
 
     fun init() {
         scope.coroutineContext.cancelChildren()
-        bindFlows()
+        setupCollecting()
     }
 
-    fun sendAction(action: ViewAction) {
+    fun sendAction(action: UiAction) {
         scope.launch {
-            actions.sendViewAction(action)
+            actionFlow.sendAction(action)
         }
     }
 
@@ -41,10 +41,10 @@ abstract class BaseViewModel<ViewAction, ViewState, NavEvent> : ViewModel()
         model.sendNavigationEvent(navEvent)
     }
 
-    private fun bindFlows() {
+    private fun setupCollecting() {
         scope.launch {
-            viewActions.collect { viewAction ->
-                model.onViewAction(viewAction)
+            uiActions.collect { viewAction ->
+                model.onAction(viewAction)
             }
         }
     }

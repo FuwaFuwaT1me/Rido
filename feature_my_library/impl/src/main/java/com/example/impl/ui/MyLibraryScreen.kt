@@ -38,7 +38,7 @@ fun MyLibraryScreen(
     myLibraryViewModel: MyLibraryViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val state by myLibraryViewModel.model.viewState.collectAsState()
+    val state by myLibraryViewModel.model.state.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(modifier = modifier) {

@@ -1,4 +1,4 @@
-package com.example.impl.ui.pdf
+package com.example.impl.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,6 +19,7 @@ import com.example.impl.mvi.ReaderLoaded
 import com.example.impl.mvi.ReaderStartLoading
 import com.example.impl.mvi.ReaderViewModel
 import com.example.impl.ui.image.ImageViewer
+import com.example.impl.ui.pdf.PdfViewer
 import java.io.File
 
 @Composable

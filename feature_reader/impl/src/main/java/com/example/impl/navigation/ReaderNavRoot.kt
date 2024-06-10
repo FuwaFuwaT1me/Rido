@@ -12,7 +12,7 @@ import com.example.api.navigation.ReaderNavScreen
 import com.example.common.BaseScreen
 import com.example.core_domain.model.common.LibraryType
 import com.example.impl.mvi.ReaderViewModel
-import com.example.impl.ui.pdf.ReaderScreen
+import com.example.impl.ui.ReaderScreen
 
 @Suppress("FunctionName")
 fun NavGraphBuilder.ReaderNavRoot(

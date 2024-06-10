@@ -12,7 +12,7 @@ class ReaderModel @Inject constructor(
     defaultViewState, scope
 ) {
 
-    override fun onViewAction(action: ReaderAction) {
+    override fun onAction(action: ReaderAction) {
         when (action) {
             ReaderLoaded -> {
                 updateState { copy(isLoading = false) }

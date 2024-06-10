@@ -3,6 +3,7 @@ package com.example.impl.ui.pdf
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -29,9 +31,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.rememberAsyncImagePainter
 import coil.imageLoader
 import coil.memory.MemoryCache
@@ -138,11 +140,16 @@ fun PdfViewer(
             }
         }
 
+        var pagerScrollEnabled by remember {
+            mutableStateOf(true)
+        }
+
         HorizontalOrVerticalPager(
             pagerState = pagerState,
             orientation = orientation,
             flingBehavior = flingBehavior,
             beyondBoundPageCount = 0,
+            userScrollEnabled = true,
             modifier = modifier
                 .size(widthDp, heightDp)
                 .fillMaxWidth()
@@ -191,11 +198,19 @@ fun PdfViewer(
                     .size(Size.ORIGINAL)
                     .build()
 
+                val imageScrollState = rememberScrollState()
+
+                LaunchedEffect(imageScrollState.isScrollInProgress) {
+                    pagerScrollEnabled = !imageScrollState.isScrollInProgress
+                    Log.d("ANIME", "${imageScrollState.isScrollInProgress}")
+                }
+
                 ZoomableImage(
                     contentScale = ContentScale.Fit,
                     painter = rememberAsyncImagePainter(request),
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    scrollState = imageScrollState
                 )
             }
         }

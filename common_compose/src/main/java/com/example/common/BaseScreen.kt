@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.common.navigation.DataBundle
 import com.example.core.mvi.api.Action
-import com.example.core.mvi.api.MviNavigationEvent
+import com.example.core.mvi.api.NavigationEvent
 import com.example.core.mvi.api.State
 import com.example.core.mvi.impl.BaseNavigationEvent
 import com.example.core.mvi.impl.BaseViewModel
@@ -20,7 +20,7 @@ import com.google.gson.Gson
 @Composable
 fun BaseScreen(
     navController: NavController,
-    viewModel: BaseViewModel<out Action, out State, out MviNavigationEvent>,
+    viewModel: BaseViewModel<out Action, out State, out NavigationEvent>,
     content: @Composable (NavController) -> Unit
 ) {
     LaunchedEffect(Unit) {

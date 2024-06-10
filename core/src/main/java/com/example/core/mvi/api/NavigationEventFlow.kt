@@ -2,7 +2,9 @@ package com.example.core.mvi.api
 
 import kotlinx.coroutines.flow.Flow
 
-interface ModelNavigationEvent<NavEvent : MviNavigationEvent> {
+interface NavigationEvent
+
+interface NavigationEventFlow<NavEvent : NavigationEvent> {
 
     val navigationEvent: Flow<NavEvent>
 

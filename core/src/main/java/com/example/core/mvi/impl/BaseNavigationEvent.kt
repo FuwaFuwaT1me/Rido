@@ -1,9 +1,9 @@
 package com.example.core.mvi.impl
 
 import com.example.common.navigation.DataBundle
-import com.example.core.mvi.api.MviNavigationEvent
+import com.example.core.mvi.api.NavigationEvent
 
-sealed interface BaseNavigationEvent : MviNavigationEvent {
+sealed interface BaseNavigationEvent : NavigationEvent {
 
     interface NavigateTo : BaseNavigationEvent {
         val route: String

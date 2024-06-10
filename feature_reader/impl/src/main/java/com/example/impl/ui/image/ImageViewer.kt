@@ -60,7 +60,7 @@ fun ImageViewer(
                 modifier = Modifier
                     .fillMaxSize(),
                 painter = rememberAsyncImagePainter(request),
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Fit
             )
         }
     }

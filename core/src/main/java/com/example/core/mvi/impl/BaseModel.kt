@@ -3,42 +3,37 @@ package com.example.core.mvi.impl
 import androidx.annotation.CallSuper
 import com.example.core.mvi.api.Action
 import com.example.core.mvi.api.Model
-import com.example.core.mvi.api.ModelNavigationEvent
-import com.example.core.mvi.api.ModelState
-import com.example.core.mvi.api.MviNavigationEvent
+import com.example.core.mvi.api.NavigationEvent
+import com.example.core.mvi.api.NavigationEventFlow
 import com.example.core.mvi.api.State
-import com.example.core.mvi.api.withState
+import com.example.core.mvi.api.UiStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-abstract class BaseModel<ViewState, ViewAction, NavEvent>(
-    defaultViewState: ViewState,
+abstract class BaseModel<UiState, UiAction, NavEvent>(
+    defaultViewState: UiState,
     protected val scope: CoroutineScope = CoroutineScope(Dispatchers.Default),
-    private val modelState: ModelState<ViewState> = BaseModelState(defaultViewState, scope),
-    private val modelNavigationEvent: ModelNavigationEvent<NavEvent> = BaseModelNavigationEvent(scope)
-) : Model<ViewState, ViewAction, NavEvent>
-    where ViewState : State,
-          ViewAction : Action,
-          NavEvent : MviNavigationEvent {
+    private val uiStateFlow: UiStateFlow<UiState> = BaseUiStateFlow(defaultViewState, scope),
+    private val navigationEventFlow: NavigationEventFlow<NavEvent> = BaseNavigationEventFlow(scope)
+) : Model<UiState, UiAction, NavEvent>
+    where UiState : State,
+          UiAction : Action,
+          NavEvent : NavigationEvent {
 
-    override val viewState: StateFlow<ViewState>
-        get() = modelState.viewState
+    override val state: StateFlow<UiState>
+        get() = uiStateFlow.state
     override val navigationEvent: Flow<NavEvent>
-        get() = modelNavigationEvent.navigationEvent
+        get() = navigationEventFlow.navigationEvent
 
     override fun sendNavigationEvent(navEvent: NavEvent) {
-        modelNavigationEvent.sendNavigationEvent(navEvent)
+        navigationEventFlow.sendNavigationEvent(navEvent)
     }
 
-    protected fun updateState(updateViewState: ViewState.() -> ViewState) {
-        modelState.updateState(updateViewState)
-    }
-
-    protected fun withState(withViewState: ViewState.() -> Unit) {
-        modelState.withState(withViewState)
+    protected fun updateState(updateState: UiState.() -> UiState) {
+        uiStateFlow.updateState(updateState)
     }
 
     @CallSuper

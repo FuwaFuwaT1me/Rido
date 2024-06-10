@@ -40,7 +40,7 @@ class MyLibraryModel @Inject constructor(
         collectUpdatingLibraryItems()
     }
 
-    override fun onViewAction(action: MyLibraryAction) {
+    override fun onAction(action: MyLibraryAction) {
         when (action) {
             is SaveFilesAction -> {
                 scope.launch(Dispatchers.IO) {
@@ -100,7 +100,7 @@ class MyLibraryModel @Inject constructor(
 
         pdfFile?.let { pdfFileDao.insertPdfFile(it.toDto()) }
 
-        onViewAction(CloseFilePickerAction)
+        onAction(CloseFilePickerAction)
     }
 
     private suspend fun savePdfFile(file: File, dir: File): PdfFile? {
