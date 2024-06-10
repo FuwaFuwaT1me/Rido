@@ -1,7 +1,7 @@
 package com.example.api.navigation
 
 import com.example.common.navigation.Screen
+import kotlinx.serialization.Serializable
 
-data object MyLibraryNavScreen : Screen {
-    override val name: String = "my_library_screen"
-}
+@Serializable
+data object MyLibraryNavScreen : Screen

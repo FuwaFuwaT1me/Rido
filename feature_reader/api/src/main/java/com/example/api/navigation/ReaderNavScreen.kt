@@ -1,7 +1,9 @@
 package com.example.api.navigation
 
 import com.example.common.navigation.Screen
+import kotlinx.serialization.Serializable
 
-data object ReaderNavScreen : Screen {
-    override val name: String = "reader_screen"
-}
+@Serializable
+data class ReaderNavScreen(
+    val dataBundle: ReaderDataBundle
+) : Screen

@@ -49,7 +49,7 @@ fun MyLibraryScreen(
                             modifier = Modifier.clickable {
                                 val readerDataBundle = ReaderDataBundle(
                                     libraryItem.id,
-                                    LibraryType.COMICS.toString()
+                                    LibraryType.COMICS
                                 )
                                 val navEvent = NavigateToReader(readerDataBundle)
                                 myLibraryViewModel.sendNavigationEvent(navEvent)
@@ -70,7 +70,7 @@ fun MyLibraryScreen(
                             modifier = Modifier.clickable {
                                 val readerDataBundle = ReaderDataBundle(
                                     libraryItem.id,
-                                    libraryType.toString()
+                                    libraryType
                                 )
                                 val navEvent = NavigateToReader(readerDataBundle)
                                 myLibraryViewModel.sendNavigationEvent(navEvent)

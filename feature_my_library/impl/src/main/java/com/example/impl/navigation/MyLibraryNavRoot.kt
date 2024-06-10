@@ -14,7 +14,7 @@ import com.example.impl.ui.MyLibraryScreen
 fun NavGraphBuilder.MyLibraryNavRoot(
     navController: NavController,
 ) {
-    composable(MyLibraryNavScreen.name) {
+    composable<MyLibraryNavScreen> {
         val viewModel = hiltViewModel<MyLibraryViewModel>()
 
         LaunchedEffect(Unit) {

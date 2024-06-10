@@ -5,25 +5,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.example.api.navigation.ReaderDataBundle
 import com.example.api.navigation.ReaderDataBundleNavType
 import com.example.api.navigation.ReaderNavScreen
 import com.example.common.BaseScreen
-import com.example.core_domain.model.common.LibraryType
 import com.example.impl.mvi.ReaderViewModel
 import com.example.impl.ui.ReaderScreen
+import kotlin.reflect.typeOf
 
 @Suppress("FunctionName")
 fun NavGraphBuilder.ReaderNavRoot(
     navController: NavController,
 ) {
-    composable(
-        "${ReaderNavScreen.name}/{${ReaderDataBundle.NAME}}",
-        arguments = listOf(
-            navArgument(ReaderDataBundle.NAME) {
-                type = ReaderDataBundleNavType()
-            }
+    composable<ReaderNavScreen>(
+        typeMap = mapOf(
+            typeOf<ReaderDataBundle>() to ReaderDataBundleNavType()
         )
     ) { navBackStackEntry ->
         val viewModel = hiltViewModel<ReaderViewModel>()
@@ -32,22 +29,15 @@ fun NavGraphBuilder.ReaderNavRoot(
             viewModel.init()
         }
 
-        val readerScreenDataBundle = navBackStackEntry.arguments
-            ?.getParcelable<ReaderDataBundle>(ReaderDataBundle.NAME)
-        val libraryItemId = readerScreenDataBundle?.libraryItemId
-        val libraryType = readerScreenDataBundle?.libraryType
+        val dataBundle = navBackStackEntry.toRoute<ReaderNavScreen>().dataBundle
+        val libraryItemId = dataBundle.libraryItemId
+        val libraryType = dataBundle.libraryType
 
-        if (libraryItemId == null || libraryType == null) {
-            // TODO: display an error
-        } else {
-            val type = LibraryType.valueOf(libraryType)
-
-            BaseScreen(
-                navController = navController,
-                viewModel = viewModel
-            ) {
-                ReaderScreen(viewModel, libraryItemId, type)
-            }
+        BaseScreen(
+            navController = navController,
+            viewModel = viewModel
+        ) {
+            ReaderScreen(viewModel, libraryItemId, libraryType)
         }
     }
 }

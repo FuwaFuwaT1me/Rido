@@ -1,20 +1,18 @@
 package com.example.common
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.snapping.SnapFlingBehavior
+import androidx.compose.foundation.gestures.TargetedFlingBehavior
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HorizontalOrVerticalPager(
     pagerState: PagerState,
     orientation: Orientation,
     beyondBoundPageCount: Int,
-    flingBehavior: SnapFlingBehavior,
+    flingBehavior: TargetedFlingBehavior,
     userScrollEnabled: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable (Int) -> Unit
@@ -23,7 +21,7 @@ fun HorizontalOrVerticalPager(
         VerticalPager(
             modifier = modifier,
             state = pagerState,
-            beyondBoundsPageCount = beyondBoundPageCount,
+            beyondViewportPageCount = beyondBoundPageCount,
             flingBehavior = flingBehavior,
             userScrollEnabled = userScrollEnabled,
         ) { page ->
@@ -33,7 +31,7 @@ fun HorizontalOrVerticalPager(
         HorizontalPager(
             modifier = modifier,
             state = pagerState,
-            beyondBoundsPageCount = beyondBoundPageCount,
+            beyondViewportPageCount = beyondBoundPageCount,
             flingBehavior = flingBehavior,
             userScrollEnabled = userScrollEnabled,
         ) { page ->

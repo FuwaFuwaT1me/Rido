@@ -117,6 +117,7 @@ fun PdfViewer(
         val pagerState = rememberPagerState(initialPage = startPage) {
             pageCount
         }
+        // TODO: maybe use snapFlingBehavior
         val flingBehavior = PagerDefaults.flingBehavior(
             state = pagerState,
             pagerSnapDistance = PagerSnapDistance.atMost(10)
